@@ -3,33 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>thenicolet loser plinko</title>
+<title>thenicolet plinko</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
 
   /* ── Dark theme ── */
   [data-theme="dark"] {
-    --bg-body:    transparent;
-    --bg-canvas:  transparent;
-    --bg-panel:   rgba(15, 10, 28, 0.85);
-    --bg-modal:   #120d22;
-    --bg-input:   #0c0818;
-    --border:     rgba(200, 120, 255, 0.15);
-    --text:       #f0e8ff;
-    --muted:      #8b7aa8;
-    --accent:     #f472b6;       /* hot pink */
-    --accent2:    #818cf8;       /* periwinkle */
-    --peg-color:  rgba(192, 132, 252, 0.45);
-    --peg-lit:    #f472b6;
-    --peg-glow:   #f472b6;
-    --ball-hi:    #fff0f8;
-    --ball-mid:   #f472b6;
-    --ball-lo:    #be185d;
-    --ball-glow:  rgba(244,114,182,0.75);
-    --trail:      244,114,182;
-    --slot-shadow: rgba(0,0,0,0.6);
-    --url-color:  rgba(244,114,182,0.7);
-    --modal-shadow: rgba(0,0,0,0.8);
+    --bg-body:       transparent;
+    --bg-canvas:     transparent;
+    --bg-panel:      rgba(10, 5, 22, 0.88);
+    --bg-modal:      #0e0920;
+    --bg-input:      #090616;
+    --border:        rgba(180, 100, 255, 0.18);
+    --border-bright: rgba(244, 114, 182, 0.35);
+    --text:          #f5eeff;
+    --muted:         #7a6898;
+    --accent:        #f472b6;
+    --accent2:       #818cf8;
+    --peg-color:     rgba(167, 139, 250, 0.55);
+    --peg-lit:       #f472b6;
+    --peg-glow:      #f472b6;
+    --ball-hi:       #fff0f8;
+    --ball-mid:      #f472b6;
+    --ball-lo:       #be185d;
+    --ball-glow:     rgba(244,114,182,0.85);
+    --trail:         244,114,182;
+    --slot-shadow:   rgba(0,0,0,0.7);
+    --url-color:     rgba(244,114,182,0.6);
+    --modal-shadow:  rgba(0,0,0,0.92);
+    --canvas-grad1:  rgba(28, 6, 58, 0.93);
+    --canvas-grad2:  rgba(6, 4, 28, 0.97);
+    --canvas-grid:   rgba(167,139,250,0.055);
   }
 
   /* ── Light theme ── */
@@ -297,10 +301,36 @@
   .mute-btn:hover { color: var(--text); border-color: var(--muted); }
   .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
 
-  /* ── URL bar ── */
-  .url-bar {
+  /* ── Share drawer ── */
+  .share-wrap {
     width: 100%;
-    margin-top: 8px;
+    margin-top: 6px;
+  }
+
+  .share-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin: 0 auto;
+    display: block;
+    transition: color 0.2s;
+    opacity: 0.5;
+  }
+  .share-toggle:hover { color: var(--accent); opacity: 1; }
+  .share-toggle .arrow { display: inline-block; transition: transform 0.25s; font-style: normal; }
+  .share-toggle.open .arrow { transform: rotate(180deg); }
+
+  .url-bar {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -310,6 +340,16 @@
     padding: 6px 10px;
     backdrop-filter: blur(8px);
     transition: background 0.4s, border-color 0.4s;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease, background 0.4s, border-color 0.4s;
+  }
+  .url-bar.open {
+    max-height: 44px;
+    opacity: 1;
+    margin-top: 5px;
   }
 
   .url-label {
@@ -510,11 +550,16 @@
     </div>
   </div>
 
-  <!-- Share URL bar -->
-  <div class="url-bar">
-    <span class="url-label">SHARE URL</span>
-    <input id="share-url" type="text" readonly>
-    <button class="copy-btn" id="copy-btn">Copy</button>
+  <!-- Share drawer -->
+  <div class="share-wrap">
+    <button class="share-toggle" id="share-toggle">
+      share url <i class="arrow">▾</i>
+    </button>
+    <div class="url-bar" id="url-bar">
+      <span class="url-label">URL</span>
+      <input id="share-url" type="text" readonly>
+      <button class="copy-btn" id="copy-btn">Copy</button>
+    </div>
   </div>
 </div>
 
@@ -781,6 +826,33 @@ function stepBall(ball) {
 function drawBoard() {
   ctx.clearRect(0, 0, W, H);
   const c = getThemeColors();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  // Rich dark background with gradient + subtle grid
+  if (isDark) {
+    const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
+    bg.addColorStop(0, 'rgba(28,6,58,0.93)');
+    bg.addColorStop(1, 'rgba(6,4,28,0.97)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // subtle dot grid
+    ctx.fillStyle = 'rgba(167,139,250,0.055)';
+    const gs = 22;
+    for (let gx = gs; gx < W; gx += gs)
+      for (let gy = gs; gy < H; gy += gs) {
+        ctx.beginPath();
+        ctx.arc(gx, gy, 0.8, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+    // ambient glow from top center
+    const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W * 0.7);
+    glow.addColorStop(0, 'rgba(244,114,182,0.09)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+  }
 
   for (const peg of pegs) {
     const lit = litPegs.has(`${peg.row}-${peg.col}`);
@@ -927,6 +999,15 @@ document.getElementById('copy-btn').addEventListener('click', () => {
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
   });
+});
+
+// ── Share drawer toggle ────────────────────────────────────────────────
+document.getElementById('share-toggle').addEventListener('click', () => {
+  const bar = document.getElementById('url-bar');
+  const tog = document.getElementById('share-toggle');
+  const isOpen = bar.classList.toggle('open');
+  tog.classList.toggle('open', isOpen);
+  if (isOpen) updateShareURL();
 });
 
 // ── Settings modal ─────────────────────────────────────────────────────
