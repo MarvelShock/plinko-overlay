@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>thenicolet loser plinko</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
+
+  /* ── Dark theme ── */
+  [data-theme="dark"] {
+    --bg-body:    transparent;
+    --bg-canvas:  transparent;
+    --bg-panel:   rgba(15, 10, 28, 0.85);
+    --bg-modal:   #120d22;
+    --bg-input:   #0c0818;
+    --border:     rgba(200, 120, 255, 0.15);
+    --text:       #f0e8ff;
+    --muted:      #8b7aa8;
+    --accent:     #f472b6;       /* hot pink */
+    --accent2:    #818cf8;       /* periwinkle */
+    --peg-color:  rgba(192, 132, 252, 0.45);
+    --peg-lit:    #f472b6;
+    --peg-glow:   #f472b6;
+    --ball-hi:    #fff0f8;
+    --ball-mid:   #f472b6;
+    --ball-lo:    #be185d;
+    --ball-glow:  rgba(244,114,182,0.75);
+    --trail:      244,114,182;
+    --slot-shadow: rgba(0,0,0,0.6);
+    --url-color:  rgba(244,114,182,0.7);
+    --modal-shadow: rgba(0,0,0,0.8);
+  }
+
+  /* ── Light theme ── */
+  [data-theme="light"] {
+    --bg-body:    #f0e8ff;
+    --bg-canvas:  rgba(240,232,255,0.6);
+    --bg-panel:   rgba(255,255,255,0.82);
+    --bg-modal:   #ffffff;
+    --bg-input:   #f5f0ff;
+    --border:     rgba(139,92,246,0.2);
+    --text:       #1e103a;
+    --muted:      #7c6a9e;
+    --accent:     #db2777;       /* deep pink */
+    --accent2:    #6366f1;       /* indigo */
+    --peg-color:  rgba(99,102,241,0.5);
+    --peg-lit:    #db2777;
+    --peg-glow:   #db2777;
+    --ball-hi:    #fff0f8;
+    --ball-mid:   #ec4899;
+    --ball-lo:    #9d174d;
+    --ball-glow:  rgba(236,72,153,0.6);
+    --trail:      236,72,153;
+    --slot-shadow: rgba(0,0,0,0.25);
+    --url-color:  rgba(219,39,119,0.8);
+    --modal-shadow: rgba(80,0,80,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg-body);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    width: 640px;
+    overflow: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 12px 0;
+    width: 640px;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  #title-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 50%, transparent), 0 2px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    border-bottom: 2px dashed transparent;
+    transition: border-color 0.2s, color 0.4s, text-shadow 0.4s;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 480px;
+  }
+  #title-text:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+
+  #title-input {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--accent);
+    text-align: center;
+    outline: none;
+    width: 380px;
+    display: none;
+  }
+
+  /* ── Board row ── */
+  .board-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .board-wrap {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+  }
+
+  canvas {
+    display: block;
+    border-radius: 10px 10px 0 0;
+    background: var(--bg-canvas);
+    transition: background 0.4s;
+  }
+
+  /* ── Slots bar ── */
+  .slots-bar {
+    display: flex;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    height: 40px;
+    box-shadow: 0 4px 16px var(--slot-shadow);
+  }
+
+  .slot {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+  }
+
+  .slot.winner { animation: slotPop 0.6s ease; }
+  @keyframes slotPop {
+    0%   { filter: brightness(1); }
+    25%  { filter: brightness(2.6) saturate(1.5); }
+    100% { filter: brightness(1); }
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .drop-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.2s, border-color 0.4s, color 0.4s;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 25%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  .drop-btn:hover {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .drop-btn:active { transform: scale(0.9); }
+  .drop-btn.hotkey-flash { animation: btnFlash 0.18s ease; }
+  @keyframes btnFlash {
+    0%  { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+    100%{ background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  }
+
+  .hotkey-hint {
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .result-display {
+    width: 64px;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    min-height: 22px;
+    text-shadow: 0 0 10px currentColor;
+    transition: color 0.3s;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  /* ── Theme toggle ── */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+  }
+
+  .theme-icon { font-size: 0.75rem; line-height: 1; }
+
+  .toggle-track {
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent2) 30%, var(--bg-panel));
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: transform 0.25s, background 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  [data-theme="light"] .toggle-thumb { transform: translateX(16px); }
+
+  /* ── Cog ── */
+  .cog-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s, background 0.4s;
+    backdrop-filter: blur(6px);
+  }
+  .cog-btn:hover { color: var(--text); border-color: var(--muted); }
+  .cog-btn svg { transition: transform 0.35s; }
+  .cog-btn:hover svg { transform: rotate(60deg); }
+
+  /* ── Mute button ── */
+  .mute-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: color 0.2s, border-color 0.2s, background 0.4s;
+    backdrop-filter: blur(6px);
+    line-height: 1;
+  }
+  .mute-btn:hover { color: var(--text); border-color: var(--muted); }
+  .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
+
+  /* ── URL bar ── */
+  .url-bar {
+    width: 100%;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    backdrop-filter: blur(8px);
+    transition: background 0.4s, border-color 0.4s;
+  }
+
+  .url-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #share-url {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--url-color);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    outline: none;
+    min-width: 0;
+    cursor: text;
+    transition: color 0.4s;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--muted); }
+  .copy-btn.copied { color: #a855f7; border-color: #a855f7; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,0,20,0.65);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg-modal);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    width: 340px;
+    max-width: 95vw;
+    box-shadow: 0 20px 60px var(--modal-shadow);
+    transition: background 0.4s;
+  }
+
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .slot-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 2px;
+    margin-bottom: 14px;
+  }
+
+  .slot-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .slot-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .slot-input {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    padding: 6px 9px;
+    outline: none;
+    transition: border-color 0.2s, background 0.4s, color 0.4s;
+  }
+  .slot-input:focus { border-color: var(--accent); }
+
+  .remove-slot {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .remove-slot:hover { color: #f472b6; border-color: #f472b6; }
+
+  .modal-actions {
+    display: flex;
+    gap: 7px;
+    justify-content: flex-end;
+  }
+
+  .add-slot-btn {
+    flex: 1;
+    padding: 8px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 7px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .add-slot-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .save-btn {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 7px;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    transition: filter 0.15s;
+  }
+  .save-btn:hover { filter: brightness(1.12); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Title -->
+  <div class="header">
+    <span id="title-text">THENICOLET LOSER PLINKO</span>
+    <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
+  </div>
+
+  <!-- Board + sidebar -->
+  <div class="board-row">
+    <div class="board-wrap">
+      <canvas id="plinko" width="520" height="440"></canvas>
+      <div class="slots-bar" id="slots-bar"></div>
+    </div>
+
+    <div class="sidebar">
+      <button class="drop-btn" id="drop-btn" title="Drop (Space / D)">▼</button>
+      <div class="hotkey-hint">SPACE<br>or D</div>
+      <div class="result-display" id="result-display"></div>
+
+      <!-- Dark/light toggle -->
+      <div class="theme-toggle" title="Toggle light/dark">
+        <span class="theme-icon">🌙</span>
+        <div class="toggle-track" id="theme-track">
+          <div class="toggle-thumb" id="theme-thumb"></div>
+        </div>
+        <span class="theme-icon">☀️</span>
+      </div>
+
+      <!-- Mute toggle -->
+      <button class="mute-btn" id="mute-btn" title="Toggle sound">🔊</button>
+
+      <button class="cog-btn" id="cog-btn" title="Edit slots">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Share URL bar -->
+  <div class="url-bar">
+    <span class="url-label">SHARE URL</span>
+    <input id="share-url" type="text" readonly>
+    <button class="copy-btn" id="copy-btn">Copy</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>⚙ Edit Slots</h2>
+    <div class="slot-inputs" id="slot-inputs"></div>
+    <div class="modal-actions">
+      <button class="add-slot-btn" id="add-slot-btn">+ Add Slot</button>
+      <button class="save-btn" id="save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Audio Engine (Web Audio API – no libraries) ────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+// Lazily init on first user gesture so browsers don't block it
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Master volume (mutable by mute toggle)
+let audioMuted = false;
+
+function masterGain() {
+  const ctx = getAudioCtx();
+  const g = ctx.createGain();
+  g.gain.value = audioMuted ? 0 : 0.7;
+  g.connect(ctx.destination);
+  return g;
+}
+
+// Soft whoosh on ball drop
+function sfxDrop() {
+  try {
+    const ctx = getAudioCtx();
+    const out = masterGain();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5) * 0.4;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(800, ctx.currentTime);
+    filter.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.18);
+    filter.Q.value = 0.8;
+    src.connect(filter);
+    filter.connect(out);
+    src.start();
+  } catch(e) {}
+}
+
+// Tiny tick on peg hit — pitch varies slightly each time
+let lastPegSound = 0;
+function sfxPeg() {
+  const now = performance.now();
+  if (now - lastPegSound < 38) return; // throttle rapid hits
+  lastPegSound = now;
+  try {
+    const ctx = getAudioCtx();
+    const out = masterGain();
+    out.gain.value = audioMuted ? 0 : 0.18;
+    const osc = ctx.createOscillator();
+    const env = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 900 + Math.random() * 400;
+    env.gain.setValueAtTime(1, ctx.currentTime);
+    env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+    osc.connect(env);
+    env.connect(out);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.06);
+  } catch(e) {}
+}
+
+// Win fanfare — ascending arpeggio, pitch scales with slot index
+function sfxLand(slotIdx, totalSlots) {
+  try {
+    const ctx = getAudioCtx();
+    const out = masterGain();
+    // Map slot index to a "value" 0–1 (center = highest)
+    const center = (totalSlots - 1) / 2;
+    const dist = Math.abs(slotIdx - center) / center; // 0=center,1=edge
+    const baseHz = 300 + (1 - dist) * 500; // center slots = higher pitch
+
+    // Play 3-note arpeggio
+    const intervals = [1, 1.26, 1.587];
+    intervals.forEach((ratio, i) => {
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = baseHz * ratio;
+      const t = ctx.currentTime + i * 0.1;
+      env.gain.setValueAtTime(0, t);
+      env.gain.linearRampToValueAtTime(0.55, t + 0.02);
+      env.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+      osc.connect(env);
+      env.connect(out);
+      osc.start(t);
+      osc.stop(t + 0.4);
+    });
+
+    // Shimmer layer for center (high-value) slots
+    if (dist < 0.35) {
+      const shimmer = ctx.createOscillator();
+      const sEnv = ctx.createGain();
+      shimmer.type = 'sine';
+      shimmer.frequency.value = baseHz * 3;
+      sEnv.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
+      sEnv.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+      shimmer.connect(sEnv);
+      sEnv.connect(out);
+      shimmer.start(ctx.currentTime + 0.22);
+      shimmer.stop(ctx.currentTime + 0.56);
+    }
+  } catch(e) {}
+}
+
+// ── Palette: pink → blue spectrum ──────────────────────────────────────
+const SLOT_PALETTE = [
+  '#f472b6','#e879a0','#c084fc','#818cf8',
+  '#60a5fa','#a78bfa','#f9a8d4','#7dd3fc','#e879f9'
+];
+
+// Default slots: gifted subs range 5–25
+const DEFAULT_SLOTS = [
+  { label: '5 SUBS',  color: '#60a5fa' },
+  { label: '7 SUBS',  color: '#818cf8' },
+  { label: '10 SUBS', color: '#c084fc' },
+  { label: '15 SUBS', color: '#f472b6' },
+  { label: '20 SUBS', color: '#e879a0' },
+  { label: '25 SUBS', color: '#a78bfa' },
+  { label: '10 SUBS', color: '#7dd3fc' },
+  { label: '5 SUBS',  color: '#60a5fa' },
+];
+
+// ── URL params ─────────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+let titleVal = params.get('title') || 'THENICOLET LOSER PLINKO';
+let theme = params.get('theme') || 'dark';
+
+document.documentElement.setAttribute('data-theme', theme);
+
+let slots;
+const slotParam = params.get('slots');
+if (slotParam) {
+  slots = slotParam.split(',').map((s, i) => {
+    const [label, color] = s.split(':');
+    return { label: decodeURIComponent(label), color: color ? '#' + color : SLOT_PALETTE[i % SLOT_PALETTE.length] };
+  });
+} else {
+  slots = DEFAULT_SLOTS.map(s => ({ ...s }));
+}
+
+document.getElementById('title-text').textContent = titleVal;
+document.getElementById('title-input').value = titleVal;
+
+// ── Canvas ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('plinko');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const ROWS = 10, PEG_R = 5, BALL_R = 10, PAD_TOP = 36, PAD_SIDE = 40;
+
+function getPegGrid() {
+  const pegs = [];
+  for (let r = 0; r < ROWS; r++) {
+    const cols = r + 3;
+    const spacing = (W - PAD_SIDE * 2) / (cols - 1);
+    const y = PAD_TOP + r * ((H - PAD_TOP - 28) / (ROWS - 1));
+    for (let c = 0; c < cols; c++) {
+      pegs.push({ x: PAD_SIDE + c * spacing, y, row: r, col: c });
+    }
+  }
+  return pegs;
+}
+let pegs = getPegGrid();
+
+// ── Physics ────────────────────────────────────────────────────────────
+let balls = [], litPegs = new Set();
+
+function getThemeColors() {
+  const s = getComputedStyle(document.documentElement);
+  return {
+    pegColor:  s.getPropertyValue('--peg-color').trim(),
+    pegLit:    s.getPropertyValue('--peg-lit').trim(),
+    pegGlow:   s.getPropertyValue('--peg-glow').trim(),
+    ballHi:    s.getPropertyValue('--ball-hi').trim(),
+    ballMid:   s.getPropertyValue('--ball-mid').trim(),
+    ballLo:    s.getPropertyValue('--ball-lo').trim(),
+    ballGlow:  s.getPropertyValue('--ball-glow').trim(),
+    trail:     s.getPropertyValue('--trail').trim(),
+  };
+}
+
+function spawnBall() {
+  getAudioCtx();
+  sfxDrop();
+  balls.push({
+    x: W / 2 + (Math.random() - 0.5) * 8,
+    y: 10,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: 2,
+    trail: [],
+    done: false
+  });
+  const btn = document.getElementById('drop-btn');
+  btn.classList.remove('hotkey-flash');
+  void btn.offsetWidth;
+  btn.classList.add('hotkey-flash');
+}
+
+function stepBall(ball) {
+  if (ball.done) return;
+  ball.trail.unshift({ x: ball.x, y: ball.y });
+  if (ball.trail.length > 10) ball.trail.pop();
+
+  ball.vy += 0.22;
+  ball.vx *= 0.995;
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  if (ball.x - BALL_R < 0)  { ball.x = BALL_R;     ball.vx =  Math.abs(ball.vx); }
+  if (ball.x + BALL_R > W)  { ball.x = W - BALL_R; ball.vx = -Math.abs(ball.vx); }
+
+  for (const peg of pegs) {
+    const dx = ball.x - peg.x, dy = ball.y - peg.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < BALL_R + PEG_R + 1) {
+      const nx = dx/dist, ny = dy/dist;
+      const ov = BALL_R + PEG_R + 1 - dist;
+      ball.x += nx * ov; ball.y += ny * ov;
+      const dot = ball.vx*nx + ball.vy*ny;
+      ball.vx -= 2*dot*nx; ball.vy -= 2*dot*ny;
+      ball.vx += (Math.random() - 0.5) * 1.2;
+      ball.vy *= 0.75;
+      const key = `${peg.row}-${peg.col}`;
+      litPegs.add(key);
+      setTimeout(() => litPegs.delete(key), 180);
+      sfxPeg();
+    }
+  }
+
+  if (ball.y + BALL_R >= H - 2) {
+    ball.done = true;
+    ball.y = H - BALL_R - 2;
+    const n = slots.length;
+    const slotW = (W - PAD_SIDE * 2) / n;
+    const idx = Math.max(0, Math.min(n-1, Math.floor((ball.x - PAD_SIDE) / slotW)));
+    showResult(idx);
+    flashSlot(idx);
+    sfxLand(idx, n);
+  }
+}
+
+function drawBoard() {
+  ctx.clearRect(0, 0, W, H);
+  const c = getThemeColors();
+
+  for (const peg of pegs) {
+    const lit = litPegs.has(`${peg.row}-${peg.col}`);
+    ctx.beginPath();
+    ctx.arc(peg.x, peg.y, PEG_R, 0, Math.PI*2);
+    if (lit) {
+      ctx.fillStyle = c.pegLit;
+      ctx.shadowColor = c.pegGlow;
+      ctx.shadowBlur = 14;
+    } else {
+      ctx.fillStyle = c.pegColor;
+      ctx.shadowBlur = 0;
+    }
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  for (const ball of balls) {
+    for (let i = 0; i < ball.trail.length; i++) {
+      const t = ball.trail[i];
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, BALL_R * (1 - i/ball.trail.length*0.5), 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${c.trail},${(1 - i/ball.trail.length)*0.22})`;
+      ctx.fill();
+    }
+    const grad = ctx.createRadialGradient(ball.x-3, ball.y-3, 1, ball.x, ball.y, BALL_R);
+    grad.addColorStop(0, c.ballHi);
+    grad.addColorStop(0.5, c.ballMid);
+    grad.addColorStop(1, c.ballLo);
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = grad;
+    ctx.shadowColor = c.ballGlow;
+    ctx.shadowBlur = 16;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+function loop() {
+  balls = balls.filter(b => !(b.done && b.trail.length === 0));
+  for (const b of balls) {
+    stepBall(b);
+    if (b.done) b.trail.pop();
+  }
+  drawBoard();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// ── Slots bar ──────────────────────────────────────────────────────────
+function renderSlotsBar() {
+  const bar = document.getElementById('slots-bar');
+  bar.innerHTML = '';
+  slots.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'slot';
+    div.textContent = s.label;
+    div.style.background = s.color;
+    bar.appendChild(div);
+  });
+}
+renderSlotsBar();
+
+function showResult(idx) {
+  const el = document.getElementById('result-display');
+  el.textContent = slots[idx]?.label || '';
+  el.style.color = slots[idx]?.color || 'var(--accent)';
+}
+
+function flashSlot(idx) {
+  const slotEls = document.getElementById('slots-bar').children;
+  if (slotEls[idx]) {
+    slotEls[idx].classList.remove('winner');
+    void slotEls[idx].offsetWidth;
+    slotEls[idx].classList.add('winner');
+  }
+}
+
+// ── Drop + hotkeys ─────────────────────────────────────────────────────
+document.getElementById('drop-btn').addEventListener('click', spawnBall);
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space' || e.key === 'd' || e.key === 'D') {
+    e.preventDefault(); spawnBall();
+  }
+});
+
+// ── Mute toggle ────────────────────────────────────────────────────────
+const muteBtn = document.getElementById('mute-btn');
+muteBtn.addEventListener('click', () => {
+  audioMuted = !audioMuted;
+  muteBtn.textContent = audioMuted ? '🔇' : '🔊';
+  muteBtn.classList.toggle('muted', audioMuted);
+});
+
+// ── Theme toggle ───────────────────────────────────────────────────────
+document.getElementById('theme-track').addEventListener('click', () => {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  updateShareURL();
+});
+
+// ── Title edit ─────────────────────────────────────────────────────────
+const titleText  = document.getElementById('title-text');
+const titleInput = document.getElementById('title-input');
+
+titleText.addEventListener('click', () => {
+  titleText.style.display = 'none';
+  titleInput.style.display = 'block';
+  titleInput.value = titleText.textContent;
+  titleInput.focus(); titleInput.select();
+});
+
+function commitTitle() {
+  const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO';
+  titleText.textContent = val;
+  titleText.style.display = 'block';
+  titleInput.style.display = 'none';
+  updateShareURL();
+}
+titleInput.addEventListener('blur', commitTitle);
+titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') commitTitle(); });
+
+// ── Share URL ──────────────────────────────────────────────────────────
+function buildShareURL() {
+  const base = location.href.split('?')[0];
+  const t = encodeURIComponent(titleText.textContent);
+  const th = document.documentElement.getAttribute('data-theme');
+  const slotStr = slots.map(s => `${encodeURIComponent(s.label)}:${s.color.replace('#','')}`).join(',');
+  return `${base}?title=${t}&theme=${th}&slots=${slotStr}`;
+}
+
+function updateShareURL() {
+  document.getElementById('share-url').value = buildShareURL();
+}
+updateShareURL();
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(buildShareURL()).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  });
+});
+
+// ── Settings modal ─────────────────────────────────────────────────────
+const modal      = document.getElementById('modal');
+const cogBtn     = document.getElementById('cog-btn');
+const saveBtn    = document.getElementById('save-btn');
+const addSlotBtn = document.getElementById('add-slot-btn');
+
+function renderModalInputs() {
+  const container = document.getElementById('slot-inputs');
+  container.innerHTML = '';
+  slots.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'slot-row';
+
+    const swatch = document.createElement('div');
+    swatch.className = 'slot-swatch';
+    swatch.style.background = s.color;
+
+    const input = document.createElement('input');
+    input.className = 'slot-input';
+    input.type = 'text';
+    input.value = s.label;
+    input.dataset.idx = i;
+    input.placeholder = 'Label…';
+
+    const rem = document.createElement('button');
+    rem.className = 'remove-slot';
+    rem.textContent = '×';
+    rem.addEventListener('click', () => {
+      if (slots.length > 2) { slots.splice(i, 1); renderModalInputs(); }
+    });
+
+    row.appendChild(swatch); row.appendChild(input); row.appendChild(rem);
+    container.appendChild(row);
+  });
+}
+
+cogBtn.addEventListener('click', () => { renderModalInputs(); modal.classList.add('open'); });
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+addSlotBtn.addEventListener('click', () => {
+  slots.push({ label: '10 SUBS', color: SLOT_PALETTE[slots.length % SLOT_PALETTE.length] });
+  renderModalInputs();
+});
+
+saveBtn.addEventListener('click', () => {
+  document.querySelectorAll('.slot-input').forEach(inp => {
+    const idx = parseInt(inp.dataset.idx);
+    if (slots[idx]) slots[idx].label = inp.value.trim() || '?';
+  });
+  renderSlotsBar();
+  document.getElementById('result-display').textContent = '';
+  modal.classList.remove('open');
+  updateShareURL();
+});
+</script>
+</body>
+</html>
