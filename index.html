@@ -115,7 +115,7 @@
     display: none;
   }
 
-  /* ── Sub-row: switcher + twitch status on same line ── */
+  /* ── Sub-row: switcher + twitch status + obs btn on same line ── */
   .sub-row {
     width: 100%;
     display: flex;
@@ -123,6 +123,13 @@
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  .sub-row-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
@@ -168,6 +175,22 @@
   }
   .game-switcher-menu a:hover { background: rgba(244,114,182,0.10); }
   .game-switcher-menu a.active { color: var(--accent); font-weight: bold; }
+
+  /* ── OBS button ── */
+  .obs-btn {
+    background: rgba(244,114,182,0.08);
+    border: 1px solid rgba(244,114,182,0.22);
+    color: rgba(245,238,255,0.75);
+    padding: 4px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .obs-btn:hover { background: rgba(244,114,182,0.18); color: #fff; }
 
   /* ── Twitch status pill ── */
   .twitch-status-pill {
@@ -446,7 +469,7 @@
   .copy-btn:hover { color: var(--text); border-color: var(--muted); }
   .copy-btn.copied { color: #a855f7; border-color: #a855f7; }
 
-  /* ── Modal ── */
+  /* ── Settings Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -550,6 +573,65 @@
     transition: filter 0.15s;
   }
   .save-btn:hover { filter: brightness(1.12); }
+
+  /* ── OBS Modal ── */
+  .obs-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,0,20,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .obs-modal-overlay.open { display: flex; }
+  .obs-modal {
+    background: var(--bg-modal);
+    border: 1px solid rgba(244,114,182,0.28);
+    border-radius: 14px;
+    padding: 26px 28px;
+    width: 420px;
+    max-width: 95vw;
+    box-shadow: 0 20px 60px var(--modal-shadow);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .obs-modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .obs-modal ol { padding-left: 18px; margin-bottom: 14px; }
+  .obs-modal li { margin-bottom: 7px; }
+  .obs-modal .url-box {
+    background: var(--bg-input);
+    border: 1px solid rgba(244,114,182,0.22);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--url-color);
+    word-break: break-all;
+    margin-bottom: 10px;
+  }
+  .obs-modal .tip { font-size: 11px; opacity: 0.6; margin-top: 8px; }
+  .obs-modal-close {
+    margin-top: 12px;
+    width: 100%;
+    padding: 8px;
+    background: rgba(244,114,182,0.10);
+    border: 1px solid rgba(244,114,182,0.28);
+    border-radius: 7px;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+  .obs-modal-close:hover { background: rgba(244,114,182,0.20); }
 </style>
 </head>
 <body>
@@ -561,15 +643,18 @@
     <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
   </div>
 
-  <!-- Sub-row: game switcher + twitch status -->
+  <!-- Sub-row: game switcher + obs btn + twitch status -->
   <div class="sub-row">
-    <div class="game-switcher" id="gameSwitcher">
-      <button class="game-switcher-btn" id="gameSwitcherBtn">&#127918; Switch Game &#9662;</button>
-      <div class="game-switcher-menu" id="gameSwitcherMenu">
-        <a href="https://marvelshock.github.io/oinkcannon/">&#128055; Oink Cannon</a>
-        <a href="https://marvelshock.github.io/nicole-darts/">&#127919; Darts</a>
-        <a href="https://marvelshock.github.io/plinko-overlay/" class="active">&#128309; Plinko</a>
+    <div class="sub-row-left">
+      <div class="game-switcher" id="gameSwitcher">
+        <button class="game-switcher-btn" id="gameSwitcherBtn">&#127918; Switch Game &#9662;</button>
+        <div class="game-switcher-menu" id="gameSwitcherMenu">
+          <a href="https://marvelshock.github.io/oinkcannon/">&#128055; Oink Cannon</a>
+          <a href="https://marvelshock.github.io/nicole-darts/">&#127919; Darts</a>
+          <a href="https://marvelshock.github.io/plinko-overlay/" class="active">&#128309; Plinko</a>
+        </div>
       </div>
+      <button class="obs-btn" id="obsBtn">&#128250; OBS Setup</button>
     </div>
     <div class="twitch-status-pill" id="twitchPill">
       <span id="twitchPillText">&#128308; Connecting to Twitch...</span>
@@ -619,6 +704,7 @@
   </div>
 </div>
 
+<!-- Settings Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h2>&#9881; Edit Slots</h2>
@@ -627,6 +713,26 @@
       <button class="add-slot-btn" id="add-slot-btn">+ Add Slot</button>
       <button class="save-btn" id="save-btn">Save</button>
     </div>
+  </div>
+</div>
+
+<!-- OBS Setup Modal -->
+<div class="obs-modal-overlay" id="obsModal">
+  <div class="obs-modal">
+    <h2>&#128250; Add as OBS Browser Overlay</h2>
+    <ol>
+      <li>In OBS, click <strong>+</strong> under Sources &rarr; choose <strong>Browser</strong></li>
+      <li>Set the URL to:</li>
+    </ol>
+    <div class="url-box">https://marvelshock.github.io/plinko-overlay/</div>
+    <ol start="3">
+      <li>Set <strong>Width</strong> to your canvas width (e.g. <strong>640</strong>)</li>
+      <li>Set <strong>Height</strong> to your canvas height (e.g. <strong>560</strong>)</li>
+      <li>Check <strong>"Shutdown source when not visible"</strong> to save resources</li>
+      <li>Click <strong>OK</strong> &mdash; position and resize the source as needed</li>
+    </ol>
+    <p class="tip">&#128161; Twitch chat auto-connects when the page loads &mdash; no extra setup needed. Only <strong>tyler25</strong> and <strong>thenicolet</strong> can trigger drops via <strong>!drop</strong> in chat.</p>
+    <button class="obs-modal-close" id="obsModalClose">Done</button>
   </div>
 </div>
 
@@ -642,6 +748,11 @@ const gsBtn  = document.getElementById('gameSwitcherBtn');
 const gsMenu = document.getElementById('gameSwitcherMenu');
 gsBtn.addEventListener('click', e => { e.stopPropagation(); gsMenu.classList.toggle('open'); });
 document.addEventListener('click', () => gsMenu.classList.remove('open'));
+
+// ── OBS Modal ─────────────────────────────────────────────────────────
+document.getElementById('obsBtn').addEventListener('click', () => document.getElementById('obsModal').classList.add('open'));
+document.getElementById('obsModalClose').addEventListener('click', () => document.getElementById('obsModal').classList.remove('open'));
+document.getElementById('obsModal').addEventListener('click', e => { if (e.target === document.getElementById('obsModal')) document.getElementById('obsModal').classList.remove('open'); });
 
 // ── Twitch Auto-Connect ────────────────────────────────────────────────
 let twitchWS = null, twitchPingInterval = null, dropCooldown = false;
