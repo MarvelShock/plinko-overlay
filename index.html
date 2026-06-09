@@ -7,7 +7,6 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
 
-  /* ── Dark theme ── */
   [data-theme="dark"] {
     --bg-body:       transparent;
     --bg-canvas:     transparent;
@@ -36,7 +35,6 @@
     --canvas-grid:   rgba(167,139,250,0.055);
   }
 
-  /* ── Light theme ── */
   [data-theme="light"] {
     --bg-body:    #7c3aed;
     --bg-canvas:  rgba(124,58,237,0.6);
@@ -83,7 +81,7 @@
   .header {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 6px;
     position: relative;
@@ -102,7 +100,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 480px;
+    max-width: 380px;
   }
   #title-text:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
@@ -116,9 +114,104 @@
     border-bottom: 2px solid var(--accent);
     text-align: center;
     outline: none;
-    width: 380px;
+    width: 300px;
     display: none;
   }
+
+  /* Game switcher */
+  .game-switcher { position: relative; display: inline-block; flex-shrink: 0; }
+  .game-switcher-btn {
+    background: rgba(244,114,182,0.12);
+    border: 1px solid rgba(244,114,182,0.3);
+    color: #f472b6;
+    padding: 5px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .game-switcher-btn:hover { background: rgba(244,114,182,0.22); }
+  .game-switcher-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #0e0920;
+    border: 1px solid rgba(244,114,182,0.25);
+    border-radius: 9px;
+    overflow: hidden;
+    z-index: 999;
+    min-width: 180px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+  }
+  .game-switcher-menu.open { display: block; }
+  .game-switcher-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: #c9b8f0;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+  .game-switcher-menu a:hover { background: rgba(244,114,182,0.12); }
+  .game-switcher-menu a.active { color: #f472b6; font-weight: bold; }
+
+  /* Twitch bar */
+  .twitch-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(10,5,22,0.85);
+    border: 1px solid rgba(244,114,182,0.2);
+    border-radius: 8px;
+    padding: 7px 12px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .twitch-bar.hidden { display: none; }
+  .twitch-status-dot { font-size: 14px; }
+  .twitch-bar-status { color: var(--muted); flex: 1; min-width: 120px; }
+  .twitch-bar-hint { color: var(--muted); font-size: 11px; opacity: 0.7; }
+  .twitch-bar button {
+    background: rgba(244,114,182,0.1);
+    border: 1px solid rgba(244,114,182,0.25);
+    color: #f472b6;
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .twitch-bar button:hover { background: rgba(244,114,182,0.22); }
+
+  .twitch-connect-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .twitch-connect-btn {
+    background: rgba(145,70,255,0.15);
+    border: 1px solid rgba(145,70,255,0.3);
+    color: #c084fc;
+    border-radius: 7px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .twitch-connect-btn:hover { background: rgba(145,70,255,0.28); }
 
   .board-row {
     display: flex;
@@ -504,6 +597,26 @@
   <div class="header">
     <span id="title-text">THENICOLET LOSER PLINKO</span>
     <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
+    <div class="game-switcher" id="gameSwitcher">
+      <button class="game-switcher-btn" id="gameSwitcherBtn">🎮 Switch ▾</button>
+      <div class="game-switcher-menu" id="gameSwitcherMenu">
+        <a href="https://marvelshock.github.io/oinkcannon/">🐷 Oink Cannon</a>
+        <a href="https://marvelshock.github.io/nicole-darts/">🎯 Darts</a>
+        <a href="https://marvelshock.github.io/plinko-overlay/" class="active">🔵 Plinko</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Twitch bar (shown when connected) -->
+  <div class="twitch-bar hidden" id="twitchBar">
+    <span id="twitchBarStatus" class="twitch-bar-status">🟢 Live in #thenicolet — type !drop to drop a ball!</span>
+    <button id="twitchDisconnectBtn">Disconnect</button>
+  </div>
+
+  <!-- Twitch connect (shown when disconnected) -->
+  <div class="twitch-connect-section" id="twitchConnectSection">
+    <button class="twitch-connect-btn" id="twitchConnectBtn">🟣 Connect Twitch Chat</button>
+    <span style="font-size:11px;color:var(--muted);">viewers type !drop to drop a ball</span>
   </div>
 
   <div class="board-row">
@@ -513,7 +626,7 @@
     </div>
 
     <div class="sidebar">
-      <button class="drop-btn" id="drop-btn" title="Drop (Space / D)">▼</button>
+      <button class="drop-btn" id="drop-btn" title="Drop (Space / D)">&#9660;</button>
       <div class="hotkey-hint">SPACE<br>or D</div>
       <div class="result-display" id="result-display"></div>
 
@@ -538,7 +651,7 @@
 
   <div class="share-wrap">
     <button class="share-toggle" id="share-toggle">
-      share url <i class="arrow">▾</i>
+      share url <i class="arrow">&#9662;</i>
     </button>
     <div class="url-bar" id="url-bar">
       <span class="url-label">URL</span>
@@ -550,7 +663,7 @@
 
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <h2>⚙ Edit Slots</h2>
+    <h2>&#9881; Edit Slots</h2>
     <div class="slot-inputs" id="slot-inputs"></div>
     <div class="modal-actions">
       <button class="add-slot-btn" id="add-slot-btn">+ Add Slot</button>
@@ -560,6 +673,67 @@
 </div>
 
 <script>
+// ── Game Switcher ──────────────────────────────────────────────────────
+const gsBtn = document.getElementById('gameSwitcherBtn');
+const gsMenu = document.getElementById('gameSwitcherMenu');
+gsBtn.addEventListener('click', (e) => { e.stopPropagation(); gsMenu.classList.toggle('open'); });
+document.addEventListener('click', () => gsMenu.classList.remove('open'));
+
+// ── Twitch Anonymous IRC ───────────────────────────────────────────────
+const TWITCH_CHANNEL = 'thenicolet';
+const TWITCH_TRIGGER = '!drop';
+let twitchWS = null;
+let twitchPingInterval = null;
+let dropCooldown = false;
+
+function twitchConnect() {
+  if (twitchWS && twitchWS.readyState < 2) return;
+  twitchWS = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+  twitchWS.onopen = () => {
+    twitchWS.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+    twitchWS.send('PASS SCHMOOPIIE');
+    twitchWS.send('NICK justinfan' + Math.floor(Math.random() * 99999));
+    twitchWS.send('JOIN #' + TWITCH_CHANNEL);
+    twitchPingInterval = setInterval(() => {
+      if (twitchWS && twitchWS.readyState === 1) twitchWS.send('PING :tmi.twitch.tv');
+    }, 4 * 60 * 1000);
+  };
+  twitchWS.onmessage = (e) => {
+    const raw = e.data;
+    if (raw.includes('PING')) { twitchWS.send('PONG :tmi.twitch.tv'); return; }
+    if (raw.includes('366') || raw.includes('JOIN #' + TWITCH_CHANNEL)) {
+      document.getElementById('twitchBar').classList.remove('hidden');
+      document.getElementById('twitchConnectSection').style.display = 'none';
+    }
+    const privMatch = raw.match(/PRIVMSG #\S+ :(.+)/);
+    if (!privMatch) return;
+    const msg = privMatch[1].trim().toLowerCase();
+    const userMatch = raw.match(/display-name=([^;]+)/);
+    const user = userMatch ? userMatch[1] : 'viewer';
+    if (msg === TWITCH_TRIGGER || msg.startsWith(TWITCH_TRIGGER + ' ')) {
+      if (dropCooldown) return;
+      dropCooldown = true;
+      document.getElementById('result-display').textContent = user + ' dropped!';
+      spawnBall();
+      setTimeout(() => { dropCooldown = false; }, 3500);
+    }
+  };
+  twitchWS.onclose = () => {
+    clearInterval(twitchPingInterval);
+    document.getElementById('twitchBar').classList.add('hidden');
+    document.getElementById('twitchConnectSection').style.display = 'flex';
+  };
+  twitchWS.onerror = () => {};
+}
+
+function twitchDisconnect() {
+  if (twitchWS) { twitchWS.close(); twitchWS = null; }
+  clearInterval(twitchPingInterval);
+}
+
+document.getElementById('twitchConnectBtn').addEventListener('click', twitchConnect);
+document.getElementById('twitchDisconnectBtn').addEventListener('click', twitchDisconnect);
+
 // ── Audio Engine ───────────────────────────────────────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
@@ -631,7 +805,6 @@ function sfxLand(slotIdx, totalSlots) {
     const center = (totalSlots - 1) / 2;
     const dist = Math.abs(slotIdx - center) / center;
     const baseHz = 300 + (1 - dist) * 500;
-
     const intervals = [1, 1.26, 1.587];
     intervals.forEach((ratio, i) => {
       const osc = ctx.createOscillator();
@@ -647,7 +820,6 @@ function sfxLand(slotIdx, totalSlots) {
       osc.start(t);
       osc.stop(t + 0.4);
     });
-
     if (dist < 0.35) {
       const shimmer = ctx.createOscillator();
       const sEnv = ctx.createGain();
@@ -722,8 +894,6 @@ function getPegGrid() {
 let pegs = getPegGrid();
 
 // ── Physics ────────────────────────────────────────────────────────────
-// SLOWED DOWN: gravity 0.22→0.09, initial vy 2→1.0, vx spread reduced,
-// bounce damping 0.75→0.65, vx damping 0.995→0.992
 let balls = [], litPegs = new Set();
 
 function getThemeColors() {
@@ -760,10 +930,10 @@ function spawnBall() {
 function stepBall(ball) {
   if (ball.done) return;
   ball.trail.unshift({ x: ball.x, y: ball.y });
-  if (ball.trail.length > 14) ball.trail.pop(); // slightly longer trail looks nicer slow
+  if (ball.trail.length > 14) ball.trail.pop();
 
-  ball.vy += 0.045;      // gravity: was 0.09
-  ball.vx *= 0.989;      // horizontal damping: was 0.992
+  ball.vy += 0.045;
+  ball.vx *= 0.989;
   ball.x += ball.vx;
   ball.y += ball.vy;
 
@@ -779,8 +949,8 @@ function stepBall(ball) {
       ball.x += nx * ov; ball.y += ny * ov;
       const dot = ball.vx*nx + ball.vy*ny;
       ball.vx -= 2*dot*nx; ball.vy -= 2*dot*ny;
-      ball.vx += (Math.random() - 0.5) * 0.4;  // was 0.7
-      ball.vy *= 0.55;                           // was 0.65
+      ball.vx += (Math.random() - 0.5) * 0.4;
+      ball.vy *= 0.55;
       const key = `${peg.row}-${peg.col}`;
       litPegs.add(key);
       setTimeout(() => litPegs.delete(key), 180);
@@ -919,7 +1089,7 @@ document.addEventListener('keydown', e => {
 const muteBtn = document.getElementById('mute-btn');
 muteBtn.addEventListener('click', () => {
   audioMuted = !audioMuted;
-  muteBtn.textContent = audioMuted ? '🔇' : '🔊';
+  muteBtn.textContent = audioMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
   muteBtn.classList.toggle('muted', audioMuted);
 });
 
@@ -996,25 +1166,21 @@ function renderModalInputs() {
   slots.forEach((s, i) => {
     const row = document.createElement('div');
     row.className = 'slot-row';
-
     const swatch = document.createElement('div');
     swatch.className = 'slot-swatch';
     swatch.style.background = s.color;
-
     const input = document.createElement('input');
     input.className = 'slot-input';
     input.type = 'text';
     input.value = s.label;
     input.dataset.idx = i;
-    input.placeholder = 'Label…';
-
+    input.placeholder = 'Label\u2026';
     const rem = document.createElement('button');
     rem.className = 'remove-slot';
-    rem.textContent = '×';
+    rem.textContent = '\u00D7';
     rem.addEventListener('click', () => {
       if (slots.length > 2) { slots.splice(i, 1); renderModalInputs(); }
     });
-
     row.appendChild(swatch); row.appendChild(input); row.appendChild(rem);
     container.appendChild(row);
   });
