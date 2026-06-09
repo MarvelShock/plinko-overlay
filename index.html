@@ -399,76 +399,6 @@
   .mute-btn:hover { color: var(--text); border-color: var(--muted); }
   .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
 
-  /* ── Share ── */
-  .share-wrap { width: 100%; margin-top: 6px; }
-
-  .share-toggle {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    padding: 3px 8px;
-    border-radius: 5px;
-    margin: 0 auto;
-    display: block;
-    transition: color 0.2s;
-    opacity: 0.5;
-  }
-  .share-toggle:hover { color: var(--accent); opacity: 1; }
-  .share-toggle .arrow { display: inline-block; transition: transform 0.25s; font-style: normal; }
-  .share-toggle.open .arrow { transform: rotate(180deg); }
-
-  .url-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 10px;
-    backdrop-filter: blur(8px);
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    margin-top: 0;
-    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease, background 0.4s, border-color 0.4s;
-  }
-  .url-bar.open { max-height: 44px; opacity: 1; margin-top: 5px; }
-
-  .url-label { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.07em; white-space: nowrap; flex-shrink: 0; }
-
-  #share-url {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--url-color);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    outline: none;
-    min-width: 0;
-    cursor: text;
-    transition: color 0.4s;
-  }
-
-  .copy-btn {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 0.68rem;
-    padding: 3px 8px;
-    font-family: 'DM Mono', monospace;
-    transition: color 0.2s, border-color 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .copy-btn:hover { color: var(--text); border-color: var(--muted); }
-  .copy-btn.copied { color: #a855f7; border-color: #a855f7; }
-
   /* ── Settings Modal ── */
   .modal-overlay {
     display: none;
@@ -692,16 +622,6 @@
     </div>
   </div>
 
-  <div class="share-wrap">
-    <button class="share-toggle" id="share-toggle">
-      share url <i class="arrow">&#9662;</i>
-    </button>
-    <div class="url-bar" id="url-bar">
-      <span class="url-label">URL</span>
-      <input id="share-url" type="text" readonly>
-      <button class="copy-btn" id="copy-btn">Copy</button>
-    </div>
-  </div>
 </div>
 
 <!-- Settings Modal -->
@@ -1119,7 +1039,6 @@ muteBtn.addEventListener('click', () => {
 document.getElementById('theme-track').addEventListener('click', () => {
   const html = document.documentElement;
   html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  updateShareURL();
 });
 
 // ── Title edit ─────────────────────────────────────────────────────────
@@ -1132,37 +1051,9 @@ titleText.addEventListener('click', () => {
 function commitTitle() {
   const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO';
   titleText.textContent = val; titleText.style.display = 'block'; titleInput.style.display = 'none';
-  updateShareURL();
 }
 titleInput.addEventListener('blur', commitTitle);
 titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') commitTitle(); });
-
-// ── Share URL ──────────────────────────────────────────────────────────
-function buildShareURL() {
-  const base    = location.href.split('?')[0];
-  const t       = encodeURIComponent(titleText.textContent);
-  const th      = document.documentElement.getAttribute('data-theme');
-  const slotStr = slots.map(s => `${encodeURIComponent(s.label)}:${s.color.replace('#','')}`).join(',');
-  return `${base}?title=${t}&theme=${th}&slots=${slotStr}`;
-}
-function updateShareURL() { document.getElementById('share-url').value = buildShareURL(); }
-updateShareURL();
-
-document.getElementById('copy-btn').addEventListener('click', () => {
-  navigator.clipboard.writeText(buildShareURL()).then(() => {
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = 'Copied!'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
-  });
-});
-
-document.getElementById('share-toggle').addEventListener('click', () => {
-  const bar = document.getElementById('url-bar');
-  const tog = document.getElementById('share-toggle');
-  const isOpen = bar.classList.toggle('open');
-  tog.classList.toggle('open', isOpen);
-  if (isOpen) updateShareURL();
-});
 
 // ── Settings modal ─────────────────────────────────────────────────────
 const modal      = document.getElementById('modal');
@@ -1199,7 +1090,6 @@ saveBtn.addEventListener('click', () => {
   renderSlotsBar();
   document.getElementById('result-display').textContent = '';
   modal.classList.remove('open');
-  updateShareURL();
 });
 </script>
 </body>
