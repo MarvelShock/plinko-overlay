@@ -68,6 +68,18 @@
     transition: background 0.4s, color 0.4s;
   }
 
+  /* ── OBS overlay mode ── */
+  body.obs-mode {
+    background: transparent !important;
+    width: 560px;
+  }
+  body.obs-mode html { background: transparent; }
+  .obs-mode .sub-row,
+  .obs-mode .sidebar { display: none !important; }
+  .obs-mode .wrap { padding: 8px 10px 0; width: 560px; }
+  .obs-mode .board-row { gap: 0; }
+  .obs-mode .board-wrap { width: 520px; }
+
   .wrap {
     display: flex;
     flex-direction: column;
@@ -637,19 +649,19 @@
 <!-- OBS Setup Modal -->
 <div class="obs-modal-overlay" id="obsModal">
   <div class="obs-modal">
-    <h2>&#128250; OBS Setup</h2>
+    <h2>&#128250; OBS Setup — Plinko</h2>
 
-    <h3>&#127381; Minimal OBS Overlay (recommended)</h3>
-    <p class="url-label">Use this URL for a clean overlay with just the title + pegs:</p>
-    <div class="url-box">https://marvelshock.github.io/plinko-overlay/obs-overlay.html</div>
-    <p style="font-size:11px;opacity:0.55;">Width: 560 &nbsp; Height: 520</p>
+    <h3>&#127381; Clean OBS Overlay (recommended)</h3>
+    <p class="url-label">Shows only title + peg board + slots. No controls.</p>
+    <div class="url-box">https://marvelshock.github.io/plinko-overlay/?obs=1</div>
+    <p style="font-size:11px;opacity:0.55;">Width: 560 &nbsp;&nbsp; Height: 520</p>
 
     <hr class="divider">
 
     <h3>&#127381; Full App URL</h3>
     <p class="url-label">Full game with all controls:</p>
     <div class="url-box">https://marvelshock.github.io/plinko-overlay/</div>
-    <p style="font-size:11px;opacity:0.55;">Width: 640 &nbsp; Height: 560</p>
+    <p style="font-size:11px;opacity:0.55;">Width: 640 &nbsp;&nbsp; Height: 560</p>
 
     <ol style="margin-top:12px;">
       <li>In OBS, click <strong>+</strong> under Sources &rarr; choose <strong>Browser</strong></li>
@@ -667,6 +679,14 @@
 const TWITCH_CHANNEL  = 'thenicolet';
 const TWITCH_TRIGGER  = '!drop';
 const ALLOWED_USERS   = ['tyler25', 'thenicolet'];
+
+// OBS overlay mode: hide controls, transparent bg
+const obsMode = new URLSearchParams(location.search).get('obs') === '1';
+if (obsMode) {
+  document.body.classList.add('obs-mode');
+  document.documentElement.style.background = 'transparent';
+  document.body.style.background = 'transparent';
+}
 
 const gsBtn  = document.getElementById('gameSwitcherBtn');
 const gsMenu = document.getElementById('gameSwitcherMenu');
@@ -837,7 +857,9 @@ function drawBoard() {
   const c = getThemeColors();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   if (isDark) {
-    const bg = ctx.createLinearGradient(0, 0, W*0.6, H); bg.addColorStop(0, 'rgba(28,6,58,0.93)'); bg.addColorStop(1, 'rgba(6,4,28,0.97)'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    if (!obsMode) {
+      const bg = ctx.createLinearGradient(0, 0, W*0.6, H); bg.addColorStop(0, 'rgba(28,6,58,0.93)'); bg.addColorStop(1, 'rgba(6,4,28,0.97)'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    }
     ctx.fillStyle = 'rgba(167,139,250,0.055)'; const gs = 22; for (let gx = gs; gx < W; gx += gs) for (let gy = gs; gy < H; gy += gs) { ctx.beginPath(); ctx.arc(gx, gy, 0.8, 0, Math.PI*2); ctx.fill(); }
     const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W*0.7); glow.addColorStop(0, 'rgba(244,114,182,0.09)'); glow.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
   } else { ctx.fillStyle = '#f9f0ff'; ctx.fillRect(0, 0, W, H); }
@@ -882,7 +904,7 @@ document.getElementById('theme-track').addEventListener('click', () => { const h
 
 const titleText  = document.getElementById('title-text');
 const titleInput = document.getElementById('title-input');
-titleText.addEventListener('click', () => { titleText.style.display = 'none'; titleInput.style.display = 'block'; titleInput.value = titleText.textContent; titleInput.focus(); titleInput.select(); });
+titleText.addEventListener('click', () => { if (obsMode) return; titleText.style.display = 'none'; titleInput.style.display = 'block'; titleInput.value = titleText.textContent; titleInput.focus(); titleInput.select(); });
 function commitTitle() { const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO'; titleText.textContent = val; titleText.style.display = 'block'; titleInput.style.display = 'none'; }
 titleInput.addEventListener('blur', commitTitle);
 titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') commitTitle(); });
