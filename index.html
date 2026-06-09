@@ -38,16 +38,16 @@
 
   /* ── Light theme ── */
   [data-theme="light"] {
-    --bg-body:    #f0e8ff;
-    --bg-canvas:  rgba(240,232,255,0.6);
-    --bg-panel:   rgba(255,255,255,0.82);
-    --bg-modal:   #ffffff;
-    --bg-input:   #f5f0ff;
+    --bg-body:    #7c3aed;
+    --bg-canvas:  rgba(124,58,237,0.6);
+    --bg-panel:   rgba(124,58,237,0.82);
+    --bg-modal:   #6d28d9;
+    --bg-input:   #5b21b6;
     --border:     rgba(139,92,246,0.2);
     --text:       #1e103a;
     --muted:      #7c6a9e;
-    --accent:     #db2777;       /* deep pink */
-    --accent2:    #6366f1;       /* indigo */
+    --accent:     #db2777;
+    --accent2:    #6366f1;
     --peg-color:  rgba(99,102,241,0.5);
     --peg-lit:    #db2777;
     --peg-glow:   #db2777;
@@ -64,7 +64,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    background: var(--bg-body);
+    background: #1a0535;
     color: var(--text);
     font-family: 'DM Mono', monospace;
     width: 640px;
@@ -80,7 +80,6 @@
     width: 640px;
   }
 
-  /* ── Header ── */
   .header {
     width: 100%;
     display: flex;
@@ -94,8 +93,8 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.4rem;
     letter-spacing: 0.1em;
-    color: var(--accent);
-    text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 50%, transparent), 0 2px 8px rgba(0,0,0,0.4);
+    color: #ff2d9b;
+    text-shadow: 0 0 24px rgba(255,45,155,0.6), 0 2px 8px rgba(0,0,0,0.4);
     cursor: pointer;
     border-bottom: 2px dashed transparent;
     transition: border-color 0.2s, color 0.4s, text-shadow 0.4s;
@@ -121,7 +120,6 @@
     display: none;
   }
 
-  /* ── Board row ── */
   .board-row {
     display: flex;
     align-items: flex-start;
@@ -141,7 +139,6 @@
     transition: background 0.4s;
   }
 
-  /* ── Slots bar ── */
   .slots-bar {
     display: flex;
     width: 100%;
@@ -170,7 +167,6 @@
     100% { filter: brightness(1); }
   }
 
-  /* ── Sidebar ── */
   .sidebar {
     display: flex;
     flex-direction: column;
@@ -228,7 +224,6 @@
     line-height: 1.2;
   }
 
-  /* ── Theme toggle ── */
   .theme-toggle {
     display: flex;
     align-items: center;
@@ -262,7 +257,6 @@
   }
   [data-theme="light"] .toggle-thumb { transform: translateX(16px); }
 
-  /* ── Cog ── */
   .cog-btn {
     width: 36px;
     height: 36px;
@@ -281,7 +275,6 @@
   .cog-btn svg { transition: transform 0.35s; }
   .cog-btn:hover svg { transform: rotate(60deg); }
 
-  /* ── Mute button ── */
   .mute-btn {
     width: 36px;
     height: 36px;
@@ -301,7 +294,6 @@
   .mute-btn:hover { color: var(--text); border-color: var(--muted); }
   .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
 
-  /* ── Share drawer ── */
   .share-wrap {
     width: 100%;
     margin-top: 6px;
@@ -339,7 +331,6 @@
     border-radius: 8px;
     padding: 6px 10px;
     backdrop-filter: blur(8px);
-    transition: background 0.4s, border-color 0.4s;
     overflow: hidden;
     max-height: 0;
     opacity: 0;
@@ -389,7 +380,6 @@
   .copy-btn:hover { color: var(--text); border-color: var(--muted); }
   .copy-btn.copied { color: #a855f7; border-color: #a855f7; }
 
-  /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -511,13 +501,11 @@
 <body>
 <div class="wrap">
 
-  <!-- Title -->
   <div class="header">
     <span id="title-text">THENICOLET LOSER PLINKO</span>
     <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
   </div>
 
-  <!-- Board + sidebar -->
   <div class="board-row">
     <div class="board-wrap">
       <canvas id="plinko" width="520" height="440"></canvas>
@@ -529,7 +517,6 @@
       <div class="hotkey-hint">SPACE<br>or D</div>
       <div class="result-display" id="result-display"></div>
 
-      <!-- Dark/light toggle -->
       <div class="theme-toggle" title="Toggle light/dark">
         <span class="theme-icon">🌙</span>
         <div class="toggle-track" id="theme-track">
@@ -538,7 +525,6 @@
         <span class="theme-icon">☀️</span>
       </div>
 
-      <!-- Mute toggle -->
       <button class="mute-btn" id="mute-btn" title="Toggle sound">🔊</button>
 
       <button class="cog-btn" id="cog-btn" title="Edit slots">
@@ -550,7 +536,6 @@
     </div>
   </div>
 
-  <!-- Share drawer -->
   <div class="share-wrap">
     <button class="share-toggle" id="share-toggle">
       share url <i class="arrow">▾</i>
@@ -563,7 +548,6 @@
   </div>
 </div>
 
-<!-- Settings Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h2>⚙ Edit Slots</h2>
@@ -576,18 +560,16 @@
 </div>
 
 <script>
-// ── Audio Engine (Web Audio API – no libraries) ────────────────────────
+// ── Audio Engine ───────────────────────────────────────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
-// Lazily init on first user gesture so browsers don't block it
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new AudioCtx();
   if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 
-// Master volume (mutable by mute toggle)
 let audioMuted = false;
 
 function masterGain() {
@@ -598,7 +580,6 @@ function masterGain() {
   return g;
 }
 
-// Soft whoosh on ball drop
 function sfxDrop() {
   try {
     const ctx = getAudioCtx();
@@ -621,11 +602,10 @@ function sfxDrop() {
   } catch(e) {}
 }
 
-// Tiny tick on peg hit — pitch varies slightly each time
 let lastPegSound = 0;
 function sfxPeg() {
   const now = performance.now();
-  if (now - lastPegSound < 38) return; // throttle rapid hits
+  if (now - lastPegSound < 38) return;
   lastPegSound = now;
   try {
     const ctx = getAudioCtx();
@@ -644,17 +624,14 @@ function sfxPeg() {
   } catch(e) {}
 }
 
-// Win fanfare — ascending arpeggio, pitch scales with slot index
 function sfxLand(slotIdx, totalSlots) {
   try {
     const ctx = getAudioCtx();
     const out = masterGain();
-    // Map slot index to a "value" 0–1 (center = highest)
     const center = (totalSlots - 1) / 2;
-    const dist = Math.abs(slotIdx - center) / center; // 0=center,1=edge
-    const baseHz = 300 + (1 - dist) * 500; // center slots = higher pitch
+    const dist = Math.abs(slotIdx - center) / center;
+    const baseHz = 300 + (1 - dist) * 500;
 
-    // Play 3-note arpeggio
     const intervals = [1, 1.26, 1.587];
     intervals.forEach((ratio, i) => {
       const osc = ctx.createOscillator();
@@ -671,7 +648,6 @@ function sfxLand(slotIdx, totalSlots) {
       osc.stop(t + 0.4);
     });
 
-    // Shimmer layer for center (high-value) slots
     if (dist < 0.35) {
       const shimmer = ctx.createOscillator();
       const sEnv = ctx.createGain();
@@ -687,13 +663,12 @@ function sfxLand(slotIdx, totalSlots) {
   } catch(e) {}
 }
 
-// ── Palette: pink → blue spectrum ──────────────────────────────────────
+// ── Palette ────────────────────────────────────────────────────────────
 const SLOT_PALETTE = [
   '#f472b6','#e879a0','#c084fc','#818cf8',
   '#60a5fa','#a78bfa','#f9a8d4','#7dd3fc','#e879f9'
 ];
 
-// Default slots: gifted subs range 5–25
 const DEFAULT_SLOTS = [
   { label: '5 SUBS',  color: '#60a5fa' },
   { label: '7 SUBS',  color: '#818cf8' },
@@ -747,6 +722,8 @@ function getPegGrid() {
 let pegs = getPegGrid();
 
 // ── Physics ────────────────────────────────────────────────────────────
+// SLOWED DOWN: gravity 0.22→0.09, initial vy 2→1.0, vx spread reduced,
+// bounce damping 0.75→0.65, vx damping 0.995→0.992
 let balls = [], litPegs = new Set();
 
 function getThemeColors() {
@@ -769,8 +746,8 @@ function spawnBall() {
   balls.push({
     x: W / 2 + (Math.random() - 0.5) * 8,
     y: 10,
-    vx: (Math.random() - 0.5) * 1.5,
-    vy: 2,
+    vx: (Math.random() - 0.5) * 0.8,   // was 1.5
+    vy: 1.0,                             // was 2
     trail: [],
     done: false
   });
@@ -783,10 +760,10 @@ function spawnBall() {
 function stepBall(ball) {
   if (ball.done) return;
   ball.trail.unshift({ x: ball.x, y: ball.y });
-  if (ball.trail.length > 10) ball.trail.pop();
+  if (ball.trail.length > 14) ball.trail.pop(); // slightly longer trail looks nicer slow
 
-  ball.vy += 0.22;
-  ball.vx *= 0.995;
+  ball.vy += 0.09;       // gravity: was 0.22
+  ball.vx *= 0.992;      // horizontal damping: was 0.995
   ball.x += ball.vx;
   ball.y += ball.vy;
 
@@ -802,8 +779,8 @@ function stepBall(ball) {
       ball.x += nx * ov; ball.y += ny * ov;
       const dot = ball.vx*nx + ball.vy*ny;
       ball.vx -= 2*dot*nx; ball.vy -= 2*dot*ny;
-      ball.vx += (Math.random() - 0.5) * 1.2;
-      ball.vy *= 0.75;
+      ball.vx += (Math.random() - 0.5) * 0.7;  // was 1.2 — less chaotic scatter
+      ball.vy *= 0.65;                           // was 0.75 — softer bounce
       const key = `${peg.row}-${peg.col}`;
       litPegs.add(key);
       setTimeout(() => litPegs.delete(key), 180);
@@ -828,7 +805,6 @@ function drawBoard() {
   const c = getThemeColors();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-  // Rich dark background with gradient + subtle grid
   if (isDark) {
     const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
     bg.addColorStop(0, 'rgba(28,6,58,0.93)');
@@ -836,7 +812,6 @@ function drawBoard() {
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // subtle dot grid
     ctx.fillStyle = 'rgba(167,139,250,0.055)';
     const gs = 22;
     for (let gx = gs; gx < W; gx += gs)
@@ -846,7 +821,6 @@ function drawBoard() {
         ctx.fill();
       }
 
-    // ambient glow from top center
     const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W * 0.7);
     glow.addColorStop(0, 'rgba(244,114,182,0.09)');
     glow.addColorStop(1, 'rgba(0,0,0,0)');
