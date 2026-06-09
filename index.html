@@ -76,7 +76,6 @@
     width: 640px;
   }
 
-  /* ── Header: title only, full width ── */
   .header {
     width: 100%;
     display: flex;
@@ -115,7 +114,6 @@
     display: none;
   }
 
-  /* ── Sub-row: switcher + twitch status + obs btn on same line ── */
   .sub-row {
     width: 100%;
     display: flex;
@@ -133,7 +131,6 @@
     flex-wrap: wrap;
   }
 
-  /* ── Game Switcher ── */
   .game-switcher { position: relative; display: inline-block; flex-shrink: 0; }
   .game-switcher-btn {
     background: rgba(244,114,182,0.10);
@@ -176,7 +173,6 @@
   .game-switcher-menu a:hover { background: rgba(244,114,182,0.10); }
   .game-switcher-menu a.active { color: var(--accent); font-weight: bold; }
 
-  /* ── OBS button ── */
   .obs-btn {
     background: rgba(244,114,182,0.08);
     border: 1px solid rgba(244,114,182,0.22);
@@ -192,7 +188,6 @@
   }
   .obs-btn:hover { background: rgba(244,114,182,0.18); color: #fff; }
 
-  /* ── Twitch status pill ── */
   .twitch-status-pill {
     display: flex;
     align-items: center;
@@ -223,7 +218,6 @@
   }
   .twitch-status-pill button:hover { opacity: 1; }
 
-  /* ── Board ── */
   .board-row {
     display: flex;
     align-items: flex-start;
@@ -271,7 +265,6 @@
     100% { filter: brightness(1); }
   }
 
-  /* ── Sidebar ── */
   .sidebar {
     display: flex;
     flex-direction: column;
@@ -399,7 +392,6 @@
   .mute-btn:hover { color: var(--text); border-color: var(--muted); }
   .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
 
-  /* ── Settings Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -504,7 +496,6 @@
   }
   .save-btn:hover { filter: brightness(1.12); }
 
-  /* ── OBS Modal ── */
   .obs-modal-overlay {
     display: none;
     position: fixed;
@@ -520,7 +511,7 @@
     border: 1px solid rgba(244,114,182,0.28);
     border-radius: 14px;
     padding: 26px 28px;
-    width: 420px;
+    width: 460px;
     max-width: 95vw;
     box-shadow: 0 20px 60px var(--modal-shadow);
     color: var(--text);
@@ -534,7 +525,14 @@
     color: var(--accent);
     margin-bottom: 14px;
   }
-  .obs-modal ol { padding-left: 18px; margin-bottom: 14px; }
+  .obs-modal h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin: 14px 0 6px;
+  }
+  .obs-modal ol { padding-left: 18px; margin-bottom: 10px; }
   .obs-modal li { margin-bottom: 7px; }
   .obs-modal .url-box {
     background: var(--bg-input);
@@ -545,9 +543,11 @@
     font-size: 12px;
     color: var(--url-color);
     word-break: break-all;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
+  .obs-modal .url-label { font-size: 11px; opacity: 0.55; margin-bottom: 4px; }
   .obs-modal .tip { font-size: 11px; opacity: 0.6; margin-top: 8px; }
+  .obs-modal .divider { border: none; border-top: 1px solid rgba(244,114,182,0.15); margin: 14px 0; }
   .obs-modal-close {
     margin-top: 12px;
     width: 100%;
@@ -567,13 +567,11 @@
 <body>
 <div class="wrap">
 
-  <!-- Title row -->
   <div class="header">
     <span id="title-text">THENICOLET LOSER PLINKO</span>
     <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
   </div>
 
-  <!-- Sub-row: game switcher + obs btn + twitch status -->
   <div class="sub-row">
     <div class="sub-row-left">
       <div class="game-switcher" id="gameSwitcher">
@@ -639,44 +637,47 @@
 <!-- OBS Setup Modal -->
 <div class="obs-modal-overlay" id="obsModal">
   <div class="obs-modal">
-    <h2>&#128250; Add as OBS Browser Overlay</h2>
-    <ol>
-      <li>In OBS, click <strong>+</strong> under Sources &rarr; choose <strong>Browser</strong></li>
-      <li>Set the URL to:</li>
-    </ol>
+    <h2>&#128250; OBS Setup</h2>
+
+    <h3>&#127381; Minimal OBS Overlay (recommended)</h3>
+    <p class="url-label">Use this URL for a clean overlay with just the title + pegs:</p>
+    <div class="url-box">https://marvelshock.github.io/plinko-overlay/obs-overlay.html</div>
+    <p style="font-size:11px;opacity:0.55;">Width: 560 &nbsp; Height: 520</p>
+
+    <hr class="divider">
+
+    <h3>&#127381; Full App URL</h3>
+    <p class="url-label">Full game with all controls:</p>
     <div class="url-box">https://marvelshock.github.io/plinko-overlay/</div>
-    <ol start="3">
-      <li>Set <strong>Width</strong> to your canvas width (e.g. <strong>640</strong>)</li>
-      <li>Set <strong>Height</strong> to your canvas height (e.g. <strong>560</strong>)</li>
-      <li>Check <strong>"Shutdown source when not visible"</strong> to save resources</li>
-      <li>Click <strong>OK</strong> &mdash; position and resize the source as needed</li>
+    <p style="font-size:11px;opacity:0.55;">Width: 640 &nbsp; Height: 560</p>
+
+    <ol style="margin-top:12px;">
+      <li>In OBS, click <strong>+</strong> under Sources &rarr; choose <strong>Browser</strong></li>
+      <li>Paste your chosen URL above</li>
+      <li>Set Width &amp; Height as noted</li>
+      <li>Check <strong>"Shutdown source when not visible"</strong></li>
+      <li>Click <strong>OK</strong> &mdash; position and resize as needed</li>
     </ol>
-    <p class="tip">&#128161; Twitch chat auto-connects when the page loads &mdash; no extra setup needed. Only <strong>tyler25</strong> and <strong>thenicolet</strong> can trigger drops via <strong>!drop</strong> in chat.</p>
+    <p class="tip">&#128161; Twitch auto-connects on load. Only <strong>tyler25</strong> and <strong>thenicolet</strong> can trigger drops via <strong>!drop</strong>.</p>
     <button class="obs-modal-close" id="obsModalClose">Done</button>
   </div>
 </div>
 
 <script>
-// ── Config ─────────────────────────────────────────────────────────────
 const TWITCH_CHANNEL  = 'thenicolet';
 const TWITCH_TRIGGER  = '!drop';
-// Only these usernames can trigger a drop (case-insensitive)
 const ALLOWED_USERS   = ['tyler25', 'thenicolet'];
 
-// ── Game Switcher ──────────────────────────────────────────────────────
 const gsBtn  = document.getElementById('gameSwitcherBtn');
 const gsMenu = document.getElementById('gameSwitcherMenu');
 gsBtn.addEventListener('click', e => { e.stopPropagation(); gsMenu.classList.toggle('open'); });
 document.addEventListener('click', () => gsMenu.classList.remove('open'));
 
-// ── OBS Modal ─────────────────────────────────────────────────────────
 document.getElementById('obsBtn').addEventListener('click', () => document.getElementById('obsModal').classList.add('open'));
 document.getElementById('obsModalClose').addEventListener('click', () => document.getElementById('obsModal').classList.remove('open'));
 document.getElementById('obsModal').addEventListener('click', e => { if (e.target === document.getElementById('obsModal')) document.getElementById('obsModal').classList.remove('open'); });
 
-// ── Twitch Auto-Connect ────────────────────────────────────────────────
 let twitchWS = null, twitchPingInterval = null, dropCooldown = false;
-
 const pill     = document.getElementById('twitchPill');
 const pillText = document.getElementById('twitchPillText');
 
@@ -684,14 +685,8 @@ function setPillConnected(channel) {
   pill.classList.add('connected');
   pillText.textContent = '\u{1F7E2} Live in #' + channel + ' \u2014 !drop to drop';
 }
-function setPillDisconnected() {
-  pill.classList.remove('connected');
-  pillText.textContent = '\u{1F534} Disconnected';
-}
-function setPillConnecting() {
-  pill.classList.remove('connected');
-  pillText.textContent = '\u{1F7E1} Connecting...';
-}
+function setPillDisconnected() { pill.classList.remove('connected'); pillText.textContent = '\u{1F534} Disconnected'; }
+function setPillConnecting()   { pill.classList.remove('connected'); pillText.textContent = '\u{1F7E1} Connecting...'; }
 
 function twitchConnect() {
   if (twitchWS && twitchWS.readyState < 2) return;
@@ -702,9 +697,7 @@ function twitchConnect() {
     twitchWS.send('PASS SCHMOOPIIE');
     twitchWS.send('NICK justinfan' + Math.floor(Math.random() * 99999));
     twitchWS.send('JOIN #' + TWITCH_CHANNEL);
-    twitchPingInterval = setInterval(() => {
-      if (twitchWS && twitchWS.readyState === 1) twitchWS.send('PING :tmi.twitch.tv');
-    }, 4 * 60 * 1000);
+    twitchPingInterval = setInterval(() => { if (twitchWS && twitchWS.readyState === 1) twitchWS.send('PING :tmi.twitch.tv'); }, 4 * 60 * 1000);
   };
   twitchWS.onmessage = e => {
     const raw = e.data;
@@ -713,10 +706,8 @@ function twitchConnect() {
     const privMatch = raw.match(/PRIVMSG #\S+ :(.+)/);
     if (!privMatch) return;
     const msg = privMatch[1].trim().toLowerCase();
-    // Extract display-name
     const userMatch = raw.match(/display-name=([^;]+)/);
     const user = userMatch ? userMatch[1].trim() : '';
-    // Allowlist check (case-insensitive)
     if (!ALLOWED_USERS.includes(user.toLowerCase())) return;
     if (msg === TWITCH_TRIGGER || msg.startsWith(TWITCH_TRIGGER + ' ')) {
       if (dropCooldown) return;
@@ -726,121 +717,33 @@ function twitchConnect() {
       setTimeout(() => { dropCooldown = false; }, 3500);
     }
   };
-  twitchWS.onclose = () => {
-    clearInterval(twitchPingInterval);
-    setPillDisconnected();
-    // Auto-reconnect after 8 seconds
-    setTimeout(twitchConnect, 8000);
-  };
+  twitchWS.onclose = () => { clearInterval(twitchPingInterval); setPillDisconnected(); setTimeout(twitchConnect, 8000); };
   twitchWS.onerror = () => {};
 }
-
 function twitchDisconnect() {
-  if (twitchWS) {
-    twitchWS.onclose = () => { clearInterval(twitchPingInterval); setPillDisconnected(); };
-    twitchWS.close();
-    twitchWS = null;
-  }
+  if (twitchWS) { twitchWS.onclose = () => { clearInterval(twitchPingInterval); setPillDisconnected(); }; twitchWS.close(); twitchWS = null; }
 }
-
 document.getElementById('twitchDisconnectBtn').addEventListener('click', twitchDisconnect);
-
-// Auto-connect on page load
 twitchConnect();
 
-// ── Audio Engine ───────────────────────────────────────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
-
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
-}
-
+function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); if (audioCtx.state === 'suspended') audioCtx.resume(); return audioCtx; }
 let audioMuted = false;
-
-function masterGain() {
-  const ctx = getAudioCtx();
-  const g = ctx.createGain();
-  g.gain.value = audioMuted ? 0 : 0.7;
-  g.connect(ctx.destination);
-  return g;
-}
-
+function masterGain() { const ctx = getAudioCtx(); const g = ctx.createGain(); g.gain.value = audioMuted ? 0 : 0.7; g.connect(ctx.destination); return g; }
 function sfxDrop() {
-  try {
-    const ctx = getAudioCtx();
-    const out = masterGain();
-    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++)
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5) * 0.4;
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, ctx.currentTime);
-    filter.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.18);
-    filter.Q.value = 0.8;
-    src.connect(filter); filter.connect(out); src.start();
-  } catch(e) {}
+  try { const ctx = getAudioCtx(); const out = masterGain(); const buf = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate); const data = buf.getChannelData(0); for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5) * 0.4; const src = ctx.createBufferSource(); src.buffer = buf; const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.setValueAtTime(800, ctx.currentTime); filter.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.18); filter.Q.value = 0.8; src.connect(filter); filter.connect(out); src.start(); } catch(e) {}
 }
-
 let lastPegSound = 0;
 function sfxPeg() {
-  const now = performance.now();
-  if (now - lastPegSound < 38) return;
-  lastPegSound = now;
-  try {
-    const ctx = getAudioCtx();
-    const out = masterGain();
-    out.gain.value = audioMuted ? 0 : 0.18;
-    const osc = ctx.createOscillator();
-    const env = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 900 + Math.random() * 400;
-    env.gain.setValueAtTime(1, ctx.currentTime);
-    env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
-    osc.connect(env); env.connect(out);
-    osc.start(); osc.stop(ctx.currentTime + 0.06);
-  } catch(e) {}
+  const now = performance.now(); if (now - lastPegSound < 38) return; lastPegSound = now;
+  try { const ctx = getAudioCtx(); const out = masterGain(); out.gain.value = audioMuted ? 0 : 0.18; const osc = ctx.createOscillator(); const env = ctx.createGain(); osc.type = 'sine'; osc.frequency.value = 900 + Math.random() * 400; env.gain.setValueAtTime(1, ctx.currentTime); env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06); osc.connect(env); env.connect(out); osc.start(); osc.stop(ctx.currentTime + 0.06); } catch(e) {}
 }
-
 function sfxLand(slotIdx, totalSlots) {
-  try {
-    const ctx = getAudioCtx();
-    const out = masterGain();
-    const center = (totalSlots - 1) / 2;
-    const dist = Math.abs(slotIdx - center) / center;
-    const baseHz = 300 + (1 - dist) * 500;
-    [1, 1.26, 1.587].forEach((ratio, i) => {
-      const osc = ctx.createOscillator();
-      const env = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = baseHz * ratio;
-      const t = ctx.currentTime + i * 0.1;
-      env.gain.setValueAtTime(0, t);
-      env.gain.linearRampToValueAtTime(0.55, t + 0.02);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
-      osc.connect(env); env.connect(out);
-      osc.start(t); osc.stop(t + 0.4);
-    });
-    if (dist < 0.35) {
-      const sh = ctx.createOscillator();
-      const se = ctx.createGain();
-      sh.type = 'sine'; sh.frequency.value = baseHz * 3;
-      se.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
-      se.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
-      sh.connect(se); se.connect(out);
-      sh.start(ctx.currentTime + 0.22); sh.stop(ctx.currentTime + 0.56);
-    }
-  } catch(e) {}
+  try { const ctx = getAudioCtx(); const out = masterGain(); const center = (totalSlots - 1) / 2; const dist = Math.abs(slotIdx - center) / center; const baseHz = 300 + (1 - dist) * 500; [1, 1.26, 1.587].forEach((ratio, i) => { const osc = ctx.createOscillator(); const env = ctx.createGain(); osc.type = 'triangle'; osc.frequency.value = baseHz * ratio; const t = ctx.currentTime + i * 0.1; env.gain.setValueAtTime(0, t); env.gain.linearRampToValueAtTime(0.55, t + 0.02); env.gain.exponentialRampToValueAtTime(0.001, t + 0.38); osc.connect(env); env.connect(out); osc.start(t); osc.stop(t + 0.4); }); if (dist < 0.35) { const sh = ctx.createOscillator(); const se = ctx.createGain(); sh.type = 'sine'; sh.frequency.value = baseHz * 3; se.gain.setValueAtTime(0.25, ctx.currentTime + 0.22); se.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55); sh.connect(se); se.connect(out); sh.start(ctx.currentTime + 0.22); sh.stop(ctx.currentTime + 0.56); } } catch(e) {}
 }
 
-// ── Palette ────────────────────────────────────────────────────────────
 const SLOT_PALETTE = ['#f472b6','#e879a0','#c084fc','#818cf8','#60a5fa','#a78bfa','#f9a8d4','#7dd3fc','#e879f9'];
-
 const DEFAULT_SLOTS = [
   { label: '5 SUBS',  color: '#60a5fa' },
   { label: '7 SUBS',  color: '#818cf8' },
@@ -852,28 +755,21 @@ const DEFAULT_SLOTS = [
   { label: '5 SUBS',  color: '#60a5fa' },
 ];
 
-// ── URL params ─────────────────────────────────────────────────────────
-const params   = new URLSearchParams(location.search);
-let titleVal   = params.get('title') || 'THENICOLET LOSER PLINKO';
-let theme      = params.get('theme') || 'dark';
-
+const params = new URLSearchParams(location.search);
+let titleVal = params.get('title') || 'THENICOLET LOSER PLINKO';
+let theme    = params.get('theme') || 'dark';
 document.documentElement.setAttribute('data-theme', theme);
 
 let slots;
 const slotParam = params.get('slots');
 if (slotParam) {
-  slots = slotParam.split(',').map((s, i) => {
-    const [label, color] = s.split(':');
-    return { label: decodeURIComponent(label), color: color ? '#' + color : SLOT_PALETTE[i % SLOT_PALETTE.length] };
-  });
+  slots = slotParam.split(',').map((s, i) => { const [label, color] = s.split(':'); return { label: decodeURIComponent(label), color: color ? '#' + color : SLOT_PALETTE[i % SLOT_PALETTE.length] }; });
 } else {
   slots = DEFAULT_SLOTS.map(s => ({ ...s }));
 }
-
 document.getElementById('title-text').textContent = titleVal;
 document.getElementById('title-input').value = titleVal;
 
-// ── Canvas + Physics ───────────────────────────────────────────────────
 const canvas = document.getElementById('plinko');
 const ctx    = canvas.getContext('2d');
 const W = canvas.width, H = canvas.height;
@@ -885,8 +781,7 @@ function getPegGrid() {
     const cols = r + 3;
     const spacing = (W - PAD_SIDE * 2) / (cols - 1);
     const y = PAD_TOP + r * ((H - PAD_TOP - 28) / (ROWS - 1));
-    for (let c = 0; c < cols; c++)
-      pegs.push({ x: PAD_SIDE + c * spacing, y, row: r, col: c });
+    for (let c = 0; c < cols; c++) pegs.push({ x: PAD_SIDE + c * spacing, y, row: r, col: c });
   }
   return pegs;
 }
@@ -895,16 +790,7 @@ let balls = [], litPegs = new Set();
 
 function getThemeColors() {
   const s = getComputedStyle(document.documentElement);
-  return {
-    pegColor: s.getPropertyValue('--peg-color').trim(),
-    pegLit:   s.getPropertyValue('--peg-lit').trim(),
-    pegGlow:  s.getPropertyValue('--peg-glow').trim(),
-    ballHi:   s.getPropertyValue('--ball-hi').trim(),
-    ballMid:  s.getPropertyValue('--ball-mid').trim(),
-    ballLo:   s.getPropertyValue('--ball-lo').trim(),
-    ballGlow: s.getPropertyValue('--ball-glow').trim(),
-    trail:    s.getPropertyValue('--trail').trim(),
-  };
+  return { pegColor: s.getPropertyValue('--peg-color').trim(), pegLit: s.getPropertyValue('--peg-lit').trim(), pegGlow: s.getPropertyValue('--peg-glow').trim(), ballHi: s.getPropertyValue('--ball-hi').trim(), ballMid: s.getPropertyValue('--ball-mid').trim(), ballLo: s.getPropertyValue('--ball-lo').trim(), ballGlow: s.getPropertyValue('--ball-glow').trim(), trail: s.getPropertyValue('--trail').trim() };
 }
 
 function spawnBall() {
@@ -951,58 +837,28 @@ function drawBoard() {
   const c = getThemeColors();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   if (isDark) {
-    const bg = ctx.createLinearGradient(0, 0, W*0.6, H);
-    bg.addColorStop(0, 'rgba(28,6,58,0.93)'); bg.addColorStop(1, 'rgba(6,4,28,0.97)');
-    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(167,139,250,0.055)';
-    const gs = 22;
-    for (let gx = gs; gx < W; gx += gs)
-      for (let gy = gs; gy < H; gy += gs) { ctx.beginPath(); ctx.arc(gx, gy, 0.8, 0, Math.PI*2); ctx.fill(); }
-    const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W*0.7);
-    glow.addColorStop(0, 'rgba(244,114,182,0.09)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
-  } else {
-    ctx.fillStyle = '#f9f0ff'; ctx.fillRect(0, 0, W, H);
-  }
+    const bg = ctx.createLinearGradient(0, 0, W*0.6, H); bg.addColorStop(0, 'rgba(28,6,58,0.93)'); bg.addColorStop(1, 'rgba(6,4,28,0.97)'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(167,139,250,0.055)'; const gs = 22; for (let gx = gs; gx < W; gx += gs) for (let gy = gs; gy < H; gy += gs) { ctx.beginPath(); ctx.arc(gx, gy, 0.8, 0, Math.PI*2); ctx.fill(); }
+    const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W*0.7); glow.addColorStop(0, 'rgba(244,114,182,0.09)'); glow.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+  } else { ctx.fillStyle = '#f9f0ff'; ctx.fillRect(0, 0, W, H); }
   for (const peg of pegs) {
     const lit = litPegs.has(`${peg.row}-${peg.col}`);
     ctx.beginPath(); ctx.arc(peg.x, peg.y, PEG_R, 0, Math.PI*2);
-    ctx.fillStyle  = lit ? c.pegLit  : c.pegColor;
-    ctx.shadowColor = lit ? c.pegGlow : 'transparent';
-    ctx.shadowBlur  = lit ? 14 : 0;
-    ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = lit ? c.pegLit : c.pegColor; ctx.shadowColor = lit ? c.pegGlow : 'transparent'; ctx.shadowBlur = lit ? 14 : 0; ctx.fill(); ctx.shadowBlur = 0;
   }
   for (const ball of balls) {
-    for (let i = 0; i < ball.trail.length; i++) {
-      const t = ball.trail[i];
-      ctx.beginPath(); ctx.arc(t.x, t.y, BALL_R*(1-i/ball.trail.length*0.5), 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${c.trail},${(1-i/ball.trail.length)*0.22})`; ctx.fill();
-    }
+    for (let i = 0; i < ball.trail.length; i++) { const t = ball.trail[i]; ctx.beginPath(); ctx.arc(t.x, t.y, BALL_R*(1-i/ball.trail.length*0.5), 0, Math.PI*2); ctx.fillStyle = `rgba(${c.trail},${(1-i/ball.trail.length)*0.22})`; ctx.fill(); }
     const grad = ctx.createRadialGradient(ball.x-3, ball.y-3, 1, ball.x, ball.y, BALL_R);
     grad.addColorStop(0, c.ballHi); grad.addColorStop(0.5, c.ballMid); grad.addColorStop(1, c.ballLo);
-    ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
-    ctx.fillStyle = grad; ctx.shadowColor = c.ballGlow; ctx.shadowBlur = 16;
-    ctx.fill(); ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2); ctx.fillStyle = grad; ctx.shadowColor = c.ballGlow; ctx.shadowBlur = 16; ctx.fill(); ctx.shadowBlur = 0;
   }
 }
-
-function loop() {
-  balls = balls.filter(b => !(b.done && b.trail.length === 0));
-  for (const b of balls) { stepBall(b); if (b.done) b.trail.pop(); }
-  drawBoard();
-  requestAnimationFrame(loop);
-}
+function loop() { balls = balls.filter(b => !(b.done && b.trail.length === 0)); for (const b of balls) { stepBall(b); if (b.done) b.trail.pop(); } drawBoard(); requestAnimationFrame(loop); }
 loop();
 
-// ── Slots bar ──────────────────────────────────────────────────────────
 function renderSlotsBar() {
-  const bar = document.getElementById('slots-bar');
-  bar.innerHTML = '';
-  slots.forEach(s => {
-    const div = document.createElement('div');
-    div.className = 'slot'; div.textContent = s.label; div.style.background = s.color;
-    bar.appendChild(div);
-  });
+  const bar = document.getElementById('slots-bar'); bar.innerHTML = '';
+  slots.forEach(s => { const div = document.createElement('div'); div.className = 'slot'; div.textContent = s.label; div.style.background = s.color; bar.appendChild(div); });
 }
 renderSlotsBar();
 
@@ -1011,86 +867,46 @@ function showResult(idx) {
   el.textContent = slots[idx]?.label || '';
   el.style.color  = slots[idx]?.color  || 'var(--accent)';
 }
-
 function flashSlot(idx) {
   const slotEls = document.getElementById('slots-bar').children;
-  if (slotEls[idx]) {
-    slotEls[idx].classList.remove('winner'); void slotEls[idx].offsetWidth;
-    slotEls[idx].classList.add('winner');
-  }
+  if (slotEls[idx]) { slotEls[idx].classList.remove('winner'); void slotEls[idx].offsetWidth; slotEls[idx].classList.add('winner'); }
 }
 
-// ── Drop + hotkeys ─────────────────────────────────────────────────────
 document.getElementById('drop-btn').addEventListener('click', spawnBall);
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.code === 'Space' || e.key === 'd' || e.key === 'D') { e.preventDefault(); spawnBall(); }
-});
+document.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space' || e.key === 'd' || e.key === 'D') { e.preventDefault(); spawnBall(); } });
 
-// ── Mute toggle ────────────────────────────────────────────────────────
 const muteBtn = document.getElementById('mute-btn');
-muteBtn.addEventListener('click', () => {
-  audioMuted = !audioMuted;
-  muteBtn.textContent = audioMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
-  muteBtn.classList.toggle('muted', audioMuted);
-});
+muteBtn.addEventListener('click', () => { audioMuted = !audioMuted; muteBtn.textContent = audioMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A'; muteBtn.classList.toggle('muted', audioMuted); });
 
-// ── Theme toggle ───────────────────────────────────────────────────────
-document.getElementById('theme-track').addEventListener('click', () => {
-  const html = document.documentElement;
-  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-});
+document.getElementById('theme-track').addEventListener('click', () => { const html = document.documentElement; html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); });
 
-// ── Title edit ─────────────────────────────────────────────────────────
 const titleText  = document.getElementById('title-text');
 const titleInput = document.getElementById('title-input');
-titleText.addEventListener('click', () => {
-  titleText.style.display = 'none'; titleInput.style.display = 'block';
-  titleInput.value = titleText.textContent; titleInput.focus(); titleInput.select();
-});
-function commitTitle() {
-  const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO';
-  titleText.textContent = val; titleText.style.display = 'block'; titleInput.style.display = 'none';
-}
+titleText.addEventListener('click', () => { titleText.style.display = 'none'; titleInput.style.display = 'block'; titleInput.value = titleText.textContent; titleInput.focus(); titleInput.select(); });
+function commitTitle() { const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO'; titleText.textContent = val; titleText.style.display = 'block'; titleInput.style.display = 'none'; }
 titleInput.addEventListener('blur', commitTitle);
 titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') commitTitle(); });
 
-// ── Settings modal ─────────────────────────────────────────────────────
 const modal      = document.getElementById('modal');
 const cogBtn     = document.getElementById('cog-btn');
 const saveBtn    = document.getElementById('save-btn');
 const addSlotBtn = document.getElementById('add-slot-btn');
 
 function renderModalInputs() {
-  const container = document.getElementById('slot-inputs');
-  container.innerHTML = '';
+  const container = document.getElementById('slot-inputs'); container.innerHTML = '';
   slots.forEach((s, i) => {
-    const row    = document.createElement('div'); row.className = 'slot-row';
+    const row = document.createElement('div'); row.className = 'slot-row';
     const swatch = document.createElement('div'); swatch.className = 'slot-swatch'; swatch.style.background = s.color;
-    const input  = document.createElement('input'); input.className = 'slot-input'; input.type = 'text';
-    input.value = s.label; input.dataset.idx = i; input.placeholder = 'Label\u2026';
+    const input = document.createElement('input'); input.className = 'slot-input'; input.type = 'text'; input.value = s.label; input.dataset.idx = i; input.placeholder = 'Label\u2026';
     const rem = document.createElement('button'); rem.className = 'remove-slot'; rem.textContent = '\u00D7';
     rem.addEventListener('click', () => { if (slots.length > 2) { slots.splice(i, 1); renderModalInputs(); } });
-    row.appendChild(swatch); row.appendChild(input); row.appendChild(rem);
-    container.appendChild(row);
+    row.appendChild(swatch); row.appendChild(input); row.appendChild(rem); container.appendChild(row);
   });
 }
-
 cogBtn.addEventListener('click', () => { renderModalInputs(); modal.classList.add('open'); });
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
-addSlotBtn.addEventListener('click', () => {
-  slots.push({ label: '10 SUBS', color: SLOT_PALETTE[slots.length % SLOT_PALETTE.length] });
-  renderModalInputs();
-});
-saveBtn.addEventListener('click', () => {
-  document.querySelectorAll('.slot-input').forEach(inp => {
-    const idx = parseInt(inp.dataset.idx);
-    if (slots[idx]) slots[idx].label = inp.value.trim() || '?';
-  });
-  renderSlotsBar();
-  document.getElementById('result-display').textContent = '';
-  modal.classList.remove('open');
-});
+addSlotBtn.addEventListener('click', () => { slots.push({ label: '10 SUBS', color: SLOT_PALETTE[slots.length % SLOT_PALETTE.length] }); renderModalInputs(); });
+saveBtn.addEventListener('click', () => { document.querySelectorAll('.slot-input').forEach(inp => { const idx = parseInt(inp.dataset.idx); if (slots[idx]) slots[idx].label = inp.value.trim() || '?'; }); renderSlotsBar(); document.getElementById('result-display').textContent = ''; modal.classList.remove('open'); });
 </script>
 </body>
 </html>
