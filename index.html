@@ -8,7 +8,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
 
   [data-theme="dark"] {
-    --bg-body:       transparent;
+    --bg-body:       #1a0535;
     --bg-canvas:     transparent;
     --bg-panel:      rgba(10, 5, 22, 0.88);
     --bg-modal:      #0e0920;
@@ -30,39 +30,37 @@
     --slot-shadow:   rgba(0,0,0,0.7);
     --url-color:     rgba(244,114,182,0.6);
     --modal-shadow:  rgba(0,0,0,0.92);
-    --canvas-grad1:  rgba(28, 6, 58, 0.93);
-    --canvas-grad2:  rgba(6, 4, 28, 0.97);
-    --canvas-grid:   rgba(167,139,250,0.055);
   }
 
   [data-theme="light"] {
-    --bg-body:    #7c3aed;
-    --bg-canvas:  rgba(124,58,237,0.6);
-    --bg-panel:   rgba(124,58,237,0.82);
-    --bg-modal:   #6d28d9;
-    --bg-input:   #5b21b6;
-    --border:     rgba(139,92,246,0.2);
-    --text:       #1e103a;
-    --muted:      #7c6a9e;
-    --accent:     #db2777;
-    --accent2:    #6366f1;
-    --peg-color:  rgba(99,102,241,0.5);
-    --peg-lit:    #db2777;
-    --peg-glow:   #db2777;
-    --ball-hi:    #fff0f8;
-    --ball-mid:   #ec4899;
-    --ball-lo:    #9d174d;
-    --ball-glow:  rgba(236,72,153,0.6);
-    --trail:      236,72,153;
-    --slot-shadow: rgba(0,0,0,0.25);
-    --url-color:  rgba(219,39,119,0.8);
-    --modal-shadow: rgba(80,0,80,0.2);
+    --bg-body:       #f9f0ff;
+    --bg-canvas:     #ffffff;
+    --bg-panel:      rgba(255,255,255,0.9);
+    --bg-modal:      #ffffff;
+    --bg-input:      #f3e8ff;
+    --border:        rgba(180,100,255,0.25);
+    --border-bright: rgba(219,39,119,0.4);
+    --text:          #1e103a;
+    --muted:         #6b4f8a;
+    --accent:        #db2777;
+    --accent2:       #7c3aed;
+    --peg-color:     rgba(139,92,246,0.5);
+    --peg-lit:       #db2777;
+    --peg-glow:      #db2777;
+    --ball-hi:       #fff0f8;
+    --ball-mid:      #ec4899;
+    --ball-lo:       #9d174d;
+    --ball-glow:     rgba(236,72,153,0.6);
+    --trail:         236,72,153;
+    --slot-shadow:   rgba(0,0,0,0.15);
+    --url-color:     #7c3aed;
+    --modal-shadow:  rgba(100,0,100,0.12);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    background: #1a0535;
+    background: var(--bg-body);
     color: var(--text);
     font-family: 'DM Mono', monospace;
     width: 640px;
@@ -78,13 +76,12 @@
     width: 640px;
   }
 
+  /* ── Header: title only, full width ── */
   .header {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-    position: relative;
+    margin-bottom: 4px;
   }
 
   #title-text {
@@ -100,8 +97,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 380px;
   }
+  [data-theme="light"] #title-text { text-shadow: 0 0 16px rgba(219,39,119,0.4), 0 2px 6px rgba(0,0,0,0.1); }
   #title-text:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
   #title-input {
@@ -112,19 +109,30 @@
     background: transparent;
     border: none;
     border-bottom: 2px solid var(--accent);
-    text-align: center;
+    text-align: left;
     outline: none;
-    width: 300px;
+    width: 100%;
     display: none;
   }
 
-  /* Game switcher */
+  /* ── Sub-row: switcher + twitch status on same line ── */
+  .sub-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Game Switcher ── */
   .game-switcher { position: relative; display: inline-block; flex-shrink: 0; }
   .game-switcher-btn {
-    background: rgba(244,114,182,0.12);
-    border: 1px solid rgba(244,114,182,0.3);
-    color: #f472b6;
-    padding: 5px 12px;
+    background: rgba(244,114,182,0.10);
+    border: 1px solid rgba(244,114,182,0.28);
+    color: var(--accent);
+    padding: 4px 11px;
     border-radius: 7px;
     cursor: pointer;
     font-family: 'DM Mono', monospace;
@@ -133,86 +141,66 @@
     align-items: center;
     gap: 5px;
     white-space: nowrap;
+    transition: background 0.15s;
   }
-  .game-switcher-btn:hover { background: rgba(244,114,182,0.22); }
+  .game-switcher-btn:hover { background: rgba(244,114,182,0.20); }
   .game-switcher-menu {
     display: none;
     position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    background: #0e0920;
+    top: calc(100% + 5px);
+    left: 0;
+    background: var(--bg-modal);
     border: 1px solid rgba(244,114,182,0.25);
     border-radius: 9px;
     overflow: hidden;
     z-index: 999;
-    min-width: 180px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    min-width: 175px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.55);
   }
   .game-switcher-menu.open { display: block; }
   .game-switcher-menu a {
     display: block;
-    padding: 10px 16px;
-    color: #c9b8f0;
+    padding: 9px 15px;
+    color: var(--text);
     text-decoration: none;
     font-size: 13px;
     transition: background 0.15s;
   }
-  .game-switcher-menu a:hover { background: rgba(244,114,182,0.12); }
-  .game-switcher-menu a.active { color: #f472b6; font-weight: bold; }
+  .game-switcher-menu a:hover { background: rgba(244,114,182,0.10); }
+  .game-switcher-menu a.active { color: var(--accent); font-weight: bold; }
 
-  /* Twitch bar */
-  .twitch-bar {
-    width: 100%;
+  /* ── Twitch status pill ── */
+  .twitch-status-pill {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(10,5,22,0.85);
-    border: 1px solid rgba(244,114,182,0.2);
-    border-radius: 8px;
-    padding: 7px 12px;
-    margin-bottom: 6px;
-    font-size: 12px;
-    flex-wrap: wrap;
-  }
-  .twitch-bar.hidden { display: none; }
-  .twitch-status-dot { font-size: 14px; }
-  .twitch-bar-status { color: var(--muted); flex: 1; min-width: 120px; }
-  .twitch-bar-hint { color: var(--muted); font-size: 11px; opacity: 0.7; }
-  .twitch-bar button {
-    background: rgba(244,114,182,0.1);
-    border: 1px solid rgba(244,114,182,0.25);
-    color: #f472b6;
-    border-radius: 6px;
-    padding: 3px 10px;
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
+    gap: 6px;
     font-size: 11px;
-    transition: background 0.15s;
-    white-space: nowrap;
+    color: var(--muted);
+    background: rgba(244,114,182,0.07);
+    border: 1px solid rgba(244,114,182,0.15);
+    border-radius: 20px;
+    padding: 3px 10px;
+    transition: border-color 0.3s, background 0.3s;
   }
-  .twitch-bar button:hover { background: rgba(244,114,182,0.22); }
-
-  .twitch-connect-section {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+  .twitch-status-pill.connected {
+    color: #4ade80;
+    border-color: rgba(74,222,128,0.3);
+    background: rgba(74,222,128,0.07);
   }
-  .twitch-connect-btn {
-    background: rgba(145,70,255,0.15);
-    border: 1px solid rgba(145,70,255,0.3);
-    color: #c084fc;
-    border-radius: 7px;
-    padding: 6px 14px;
+  .twitch-status-pill button {
+    background: none;
+    border: none;
+    color: inherit;
     cursor: pointer;
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    transition: background 0.15s;
-    white-space: nowrap;
+    font-size: 10px;
+    opacity: 0.7;
+    padding: 0;
+    margin-left: 2px;
   }
-  .twitch-connect-btn:hover { background: rgba(145,70,255,0.28); }
+  .twitch-status-pill button:hover { opacity: 1; }
 
+  /* ── Board ── */
   .board-row {
     display: flex;
     align-items: flex-start;
@@ -260,6 +248,7 @@
     100% { filter: brightness(1); }
   }
 
+  /* ── Sidebar ── */
   .sidebar {
     display: flex;
     flex-direction: column;
@@ -387,16 +376,10 @@
   .mute-btn:hover { color: var(--text); border-color: var(--muted); }
   .mute-btn.muted { color: #f472b6; border-color: rgba(244,114,182,0.4); }
 
-  .share-wrap {
-    width: 100%;
-    margin-top: 6px;
-  }
+  /* ── Share ── */
+  .share-wrap { width: 100%; margin-top: 6px; }
 
   .share-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
     background: none;
     border: none;
     color: var(--muted);
@@ -424,25 +407,15 @@
     border-radius: 8px;
     padding: 6px 10px;
     backdrop-filter: blur(8px);
-    overflow: hidden;
     max-height: 0;
     opacity: 0;
+    overflow: hidden;
     margin-top: 0;
     transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease, background 0.4s, border-color 0.4s;
   }
-  .url-bar.open {
-    max-height: 44px;
-    opacity: 1;
-    margin-top: 5px;
-  }
+  .url-bar.open { max-height: 44px; opacity: 1; margin-top: 5px; }
 
-  .url-label {
-    font-size: 0.62rem;
-    color: var(--muted);
-    letter-spacing: 0.07em;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+  .url-label { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.07em; white-space: nowrap; flex-shrink: 0; }
 
   #share-url {
     flex: 1;
@@ -473,6 +446,7 @@
   .copy-btn:hover { color: var(--text); border-color: var(--muted); }
   .copy-btn.copied { color: #a855f7; border-color: #a855f7; }
 
+  /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -513,18 +487,9 @@
     margin-bottom: 14px;
   }
 
-  .slot-row {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
+  .slot-row { display: flex; align-items: center; gap: 7px; }
 
-  .slot-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
+  .slot-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
   .slot-input {
     flex: 1;
@@ -556,11 +521,7 @@
   }
   .remove-slot:hover { color: #f472b6; border-color: #f472b6; }
 
-  .modal-actions {
-    display: flex;
-    gap: 7px;
-    justify-content: flex-end;
-  }
+  .modal-actions { display: flex; gap: 7px; justify-content: flex-end; }
 
   .add-slot-btn {
     flex: 1;
@@ -594,29 +555,26 @@
 <body>
 <div class="wrap">
 
+  <!-- Title row -->
   <div class="header">
     <span id="title-text">THENICOLET LOSER PLINKO</span>
     <input id="title-input" type="text" value="THENICOLET LOSER PLINKO" maxlength="40">
+  </div>
+
+  <!-- Sub-row: game switcher + twitch status -->
+  <div class="sub-row">
     <div class="game-switcher" id="gameSwitcher">
-      <button class="game-switcher-btn" id="gameSwitcherBtn">🎮 Switch ▾</button>
+      <button class="game-switcher-btn" id="gameSwitcherBtn">&#127918; Switch Game &#9662;</button>
       <div class="game-switcher-menu" id="gameSwitcherMenu">
-        <a href="https://marvelshock.github.io/oinkcannon/">🐷 Oink Cannon</a>
-        <a href="https://marvelshock.github.io/nicole-darts/">🎯 Darts</a>
-        <a href="https://marvelshock.github.io/plinko-overlay/" class="active">🔵 Plinko</a>
+        <a href="https://marvelshock.github.io/oinkcannon/">&#128055; Oink Cannon</a>
+        <a href="https://marvelshock.github.io/nicole-darts/">&#127919; Darts</a>
+        <a href="https://marvelshock.github.io/plinko-overlay/" class="active">&#128309; Plinko</a>
       </div>
     </div>
-  </div>
-
-  <!-- Twitch bar (shown when connected) -->
-  <div class="twitch-bar hidden" id="twitchBar">
-    <span id="twitchBarStatus" class="twitch-bar-status">🟢 Live in #thenicolet — type !drop to drop a ball!</span>
-    <button id="twitchDisconnectBtn">Disconnect</button>
-  </div>
-
-  <!-- Twitch connect (shown when disconnected) -->
-  <div class="twitch-connect-section" id="twitchConnectSection">
-    <button class="twitch-connect-btn" id="twitchConnectBtn">🟣 Connect Twitch Chat</button>
-    <span style="font-size:11px;color:var(--muted);">viewers type !drop to drop a ball</span>
+    <div class="twitch-status-pill" id="twitchPill">
+      <span id="twitchPillText">&#128308; Connecting to Twitch...</span>
+      <button id="twitchDisconnectBtn" title="Disconnect">&#10005;</button>
+    </div>
   </div>
 
   <div class="board-row">
@@ -631,14 +589,14 @@
       <div class="result-display" id="result-display"></div>
 
       <div class="theme-toggle" title="Toggle light/dark">
-        <span class="theme-icon">🌙</span>
+        <span class="theme-icon">&#127769;</span>
         <div class="toggle-track" id="theme-track">
           <div class="toggle-thumb" id="theme-thumb"></div>
         </div>
-        <span class="theme-icon">☀️</span>
+        <span class="theme-icon">&#9728;&#65039;</span>
       </div>
 
-      <button class="mute-btn" id="mute-btn" title="Toggle sound">🔊</button>
+      <button class="mute-btn" id="mute-btn" title="Toggle sound">&#128266;</button>
 
       <button class="cog-btn" id="cog-btn" title="Edit slots">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -673,21 +631,40 @@
 </div>
 
 <script>
+// ── Config ─────────────────────────────────────────────────────────────
+const TWITCH_CHANNEL  = 'thenicolet';
+const TWITCH_TRIGGER  = '!drop';
+// Only these usernames can trigger a drop (case-insensitive)
+const ALLOWED_USERS   = ['tyler25', 'thenicolet'];
+
 // ── Game Switcher ──────────────────────────────────────────────────────
-const gsBtn = document.getElementById('gameSwitcherBtn');
+const gsBtn  = document.getElementById('gameSwitcherBtn');
 const gsMenu = document.getElementById('gameSwitcherMenu');
-gsBtn.addEventListener('click', (e) => { e.stopPropagation(); gsMenu.classList.toggle('open'); });
+gsBtn.addEventListener('click', e => { e.stopPropagation(); gsMenu.classList.toggle('open'); });
 document.addEventListener('click', () => gsMenu.classList.remove('open'));
 
-// ── Twitch Anonymous IRC ───────────────────────────────────────────────
-const TWITCH_CHANNEL = 'thenicolet';
-const TWITCH_TRIGGER = '!drop';
-let twitchWS = null;
-let twitchPingInterval = null;
-let dropCooldown = false;
+// ── Twitch Auto-Connect ────────────────────────────────────────────────
+let twitchWS = null, twitchPingInterval = null, dropCooldown = false;
+
+const pill     = document.getElementById('twitchPill');
+const pillText = document.getElementById('twitchPillText');
+
+function setPillConnected(channel) {
+  pill.classList.add('connected');
+  pillText.textContent = '\u{1F7E2} Live in #' + channel + ' \u2014 !drop to drop';
+}
+function setPillDisconnected() {
+  pill.classList.remove('connected');
+  pillText.textContent = '\u{1F534} Disconnected';
+}
+function setPillConnecting() {
+  pill.classList.remove('connected');
+  pillText.textContent = '\u{1F7E1} Connecting...';
+}
 
 function twitchConnect() {
   if (twitchWS && twitchWS.readyState < 2) return;
+  setPillConnecting();
   twitchWS = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
   twitchWS.onopen = () => {
     twitchWS.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
@@ -698,18 +675,18 @@ function twitchConnect() {
       if (twitchWS && twitchWS.readyState === 1) twitchWS.send('PING :tmi.twitch.tv');
     }, 4 * 60 * 1000);
   };
-  twitchWS.onmessage = (e) => {
+  twitchWS.onmessage = e => {
     const raw = e.data;
     if (raw.includes('PING')) { twitchWS.send('PONG :tmi.twitch.tv'); return; }
-    if (raw.includes('366') || raw.includes('JOIN #' + TWITCH_CHANNEL)) {
-      document.getElementById('twitchBar').classList.remove('hidden');
-      document.getElementById('twitchConnectSection').style.display = 'none';
-    }
+    if (raw.includes('366')) setPillConnected(TWITCH_CHANNEL);
     const privMatch = raw.match(/PRIVMSG #\S+ :(.+)/);
     if (!privMatch) return;
     const msg = privMatch[1].trim().toLowerCase();
+    // Extract display-name
     const userMatch = raw.match(/display-name=([^;]+)/);
-    const user = userMatch ? userMatch[1] : 'viewer';
+    const user = userMatch ? userMatch[1].trim() : '';
+    // Allowlist check (case-insensitive)
+    if (!ALLOWED_USERS.includes(user.toLowerCase())) return;
     if (msg === TWITCH_TRIGGER || msg.startsWith(TWITCH_TRIGGER + ' ')) {
       if (dropCooldown) return;
       dropCooldown = true;
@@ -720,19 +697,25 @@ function twitchConnect() {
   };
   twitchWS.onclose = () => {
     clearInterval(twitchPingInterval);
-    document.getElementById('twitchBar').classList.add('hidden');
-    document.getElementById('twitchConnectSection').style.display = 'flex';
+    setPillDisconnected();
+    // Auto-reconnect after 8 seconds
+    setTimeout(twitchConnect, 8000);
   };
   twitchWS.onerror = () => {};
 }
 
 function twitchDisconnect() {
-  if (twitchWS) { twitchWS.close(); twitchWS = null; }
-  clearInterval(twitchPingInterval);
+  if (twitchWS) {
+    twitchWS.onclose = () => { clearInterval(twitchPingInterval); setPillDisconnected(); };
+    twitchWS.close();
+    twitchWS = null;
+  }
 }
 
-document.getElementById('twitchConnectBtn').addEventListener('click', twitchConnect);
 document.getElementById('twitchDisconnectBtn').addEventListener('click', twitchDisconnect);
+
+// Auto-connect on page load
+twitchConnect();
 
 // ── Audio Engine ───────────────────────────────────────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -760,9 +743,8 @@ function sfxDrop() {
     const out = masterGain();
     const buf = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate);
     const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++)
       data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5) * 0.4;
-    }
     const src = ctx.createBufferSource();
     src.buffer = buf;
     const filter = ctx.createBiquadFilter();
@@ -770,9 +752,7 @@ function sfxDrop() {
     filter.frequency.setValueAtTime(800, ctx.currentTime);
     filter.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.18);
     filter.Q.value = 0.8;
-    src.connect(filter);
-    filter.connect(out);
-    src.start();
+    src.connect(filter); filter.connect(out); src.start();
   } catch(e) {}
 }
 
@@ -791,10 +771,8 @@ function sfxPeg() {
     osc.frequency.value = 900 + Math.random() * 400;
     env.gain.setValueAtTime(1, ctx.currentTime);
     env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
-    osc.connect(env);
-    env.connect(out);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.06);
+    osc.connect(env); env.connect(out);
+    osc.start(); osc.stop(ctx.currentTime + 0.06);
   } catch(e) {}
 }
 
@@ -805,8 +783,7 @@ function sfxLand(slotIdx, totalSlots) {
     const center = (totalSlots - 1) / 2;
     const dist = Math.abs(slotIdx - center) / center;
     const baseHz = 300 + (1 - dist) * 500;
-    const intervals = [1, 1.26, 1.587];
-    intervals.forEach((ratio, i) => {
+    [1, 1.26, 1.587].forEach((ratio, i) => {
       const osc = ctx.createOscillator();
       const env = ctx.createGain();
       osc.type = 'triangle';
@@ -815,31 +792,23 @@ function sfxLand(slotIdx, totalSlots) {
       env.gain.setValueAtTime(0, t);
       env.gain.linearRampToValueAtTime(0.55, t + 0.02);
       env.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
-      osc.connect(env);
-      env.connect(out);
-      osc.start(t);
-      osc.stop(t + 0.4);
+      osc.connect(env); env.connect(out);
+      osc.start(t); osc.stop(t + 0.4);
     });
     if (dist < 0.35) {
-      const shimmer = ctx.createOscillator();
-      const sEnv = ctx.createGain();
-      shimmer.type = 'sine';
-      shimmer.frequency.value = baseHz * 3;
-      sEnv.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
-      sEnv.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
-      shimmer.connect(sEnv);
-      sEnv.connect(out);
-      shimmer.start(ctx.currentTime + 0.22);
-      shimmer.stop(ctx.currentTime + 0.56);
+      const sh = ctx.createOscillator();
+      const se = ctx.createGain();
+      sh.type = 'sine'; sh.frequency.value = baseHz * 3;
+      se.gain.setValueAtTime(0.25, ctx.currentTime + 0.22);
+      se.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+      sh.connect(se); se.connect(out);
+      sh.start(ctx.currentTime + 0.22); sh.stop(ctx.currentTime + 0.56);
     }
   } catch(e) {}
 }
 
 // ── Palette ────────────────────────────────────────────────────────────
-const SLOT_PALETTE = [
-  '#f472b6','#e879a0','#c084fc','#818cf8',
-  '#60a5fa','#a78bfa','#f9a8d4','#7dd3fc','#e879f9'
-];
+const SLOT_PALETTE = ['#f472b6','#e879a0','#c084fc','#818cf8','#60a5fa','#a78bfa','#f9a8d4','#7dd3fc','#e879f9'];
 
 const DEFAULT_SLOTS = [
   { label: '5 SUBS',  color: '#60a5fa' },
@@ -853,9 +822,9 @@ const DEFAULT_SLOTS = [
 ];
 
 // ── URL params ─────────────────────────────────────────────────────────
-const params = new URLSearchParams(location.search);
-let titleVal = params.get('title') || 'THENICOLET LOSER PLINKO';
-let theme = params.get('theme') || 'dark';
+const params   = new URLSearchParams(location.search);
+let titleVal   = params.get('title') || 'THENICOLET LOSER PLINKO';
+let theme      = params.get('theme') || 'dark';
 
 document.documentElement.setAttribute('data-theme', theme);
 
@@ -873,9 +842,9 @@ if (slotParam) {
 document.getElementById('title-text').textContent = titleVal;
 document.getElementById('title-input').value = titleVal;
 
-// ── Canvas ─────────────────────────────────────────────────────────────
+// ── Canvas + Physics ───────────────────────────────────────────────────
 const canvas = document.getElementById('plinko');
-const ctx = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d');
 const W = canvas.width, H = canvas.height;
 const ROWS = 10, PEG_R = 5, BALL_R = 10, PAD_TOP = 36, PAD_SIDE = 40;
 
@@ -885,88 +854,64 @@ function getPegGrid() {
     const cols = r + 3;
     const spacing = (W - PAD_SIDE * 2) / (cols - 1);
     const y = PAD_TOP + r * ((H - PAD_TOP - 28) / (ROWS - 1));
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++)
       pegs.push({ x: PAD_SIDE + c * spacing, y, row: r, col: c });
-    }
   }
   return pegs;
 }
 let pegs = getPegGrid();
-
-// ── Physics ────────────────────────────────────────────────────────────
 let balls = [], litPegs = new Set();
 
 function getThemeColors() {
   const s = getComputedStyle(document.documentElement);
   return {
-    pegColor:  s.getPropertyValue('--peg-color').trim(),
-    pegLit:    s.getPropertyValue('--peg-lit').trim(),
-    pegGlow:   s.getPropertyValue('--peg-glow').trim(),
-    ballHi:    s.getPropertyValue('--ball-hi').trim(),
-    ballMid:   s.getPropertyValue('--ball-mid').trim(),
-    ballLo:    s.getPropertyValue('--ball-lo').trim(),
-    ballGlow:  s.getPropertyValue('--ball-glow').trim(),
-    trail:     s.getPropertyValue('--trail').trim(),
+    pegColor: s.getPropertyValue('--peg-color').trim(),
+    pegLit:   s.getPropertyValue('--peg-lit').trim(),
+    pegGlow:  s.getPropertyValue('--peg-glow').trim(),
+    ballHi:   s.getPropertyValue('--ball-hi').trim(),
+    ballMid:  s.getPropertyValue('--ball-mid').trim(),
+    ballLo:   s.getPropertyValue('--ball-lo').trim(),
+    ballGlow: s.getPropertyValue('--ball-glow').trim(),
+    trail:    s.getPropertyValue('--trail').trim(),
   };
 }
 
 function spawnBall() {
-  getAudioCtx();
-  sfxDrop();
-  balls.push({
-    x: W / 2 + (Math.random() - 0.5) * 8,
-    y: 10,
-    vx: (Math.random() - 0.5) * 0.4,
-    vy: 0.5,
-    trail: [],
-    done: false
-  });
+  getAudioCtx(); sfxDrop();
+  balls.push({ x: W/2 + (Math.random()-0.5)*8, y: 10, vx: (Math.random()-0.5)*0.4, vy: 0.5, trail: [], done: false });
   const btn = document.getElementById('drop-btn');
-  btn.classList.remove('hotkey-flash');
-  void btn.offsetWidth;
-  btn.classList.add('hotkey-flash');
+  btn.classList.remove('hotkey-flash'); void btn.offsetWidth; btn.classList.add('hotkey-flash');
 }
 
 function stepBall(ball) {
   if (ball.done) return;
   ball.trail.unshift({ x: ball.x, y: ball.y });
   if (ball.trail.length > 14) ball.trail.pop();
-
-  ball.vy += 0.045;
-  ball.vx *= 0.989;
-  ball.x += ball.vx;
-  ball.y += ball.vy;
-
+  ball.vy += 0.045; ball.vx *= 0.989;
+  ball.x += ball.vx; ball.y += ball.vy;
   if (ball.x - BALL_R < 0)  { ball.x = BALL_R;     ball.vx =  Math.abs(ball.vx); }
   if (ball.x + BALL_R > W)  { ball.x = W - BALL_R; ball.vx = -Math.abs(ball.vx); }
-
   for (const peg of pegs) {
     const dx = ball.x - peg.x, dy = ball.y - peg.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
     if (dist < BALL_R + PEG_R + 1) {
       const nx = dx/dist, ny = dy/dist;
       const ov = BALL_R + PEG_R + 1 - dist;
-      ball.x += nx * ov; ball.y += ny * ov;
+      ball.x += nx*ov; ball.y += ny*ov;
       const dot = ball.vx*nx + ball.vy*ny;
       ball.vx -= 2*dot*nx; ball.vy -= 2*dot*ny;
-      ball.vx += (Math.random() - 0.5) * 0.4;
+      ball.vx += (Math.random()-0.5)*0.4;
       ball.vy *= 0.55;
       const key = `${peg.row}-${peg.col}`;
-      litPegs.add(key);
-      setTimeout(() => litPegs.delete(key), 180);
-      sfxPeg();
+      litPegs.add(key); setTimeout(() => litPegs.delete(key), 180); sfxPeg();
     }
   }
-
   if (ball.y + BALL_R >= H - 2) {
-    ball.done = true;
-    ball.y = H - BALL_R - 2;
+    ball.done = true; ball.y = H - BALL_R - 2;
     const n = slots.length;
-    const slotW = (W - PAD_SIDE * 2) / n;
+    const slotW = (W - PAD_SIDE*2) / n;
     const idx = Math.max(0, Math.min(n-1, Math.floor((ball.x - PAD_SIDE) / slotW)));
-    showResult(idx);
-    flashSlot(idx);
-    sfxLand(idx, n);
+    showResult(idx); flashSlot(idx); sfxLand(idx, n);
   }
 }
 
@@ -974,74 +919,45 @@ function drawBoard() {
   ctx.clearRect(0, 0, W, H);
   const c = getThemeColors();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
   if (isDark) {
-    const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
-    bg.addColorStop(0, 'rgba(28,6,58,0.93)');
-    bg.addColorStop(1, 'rgba(6,4,28,0.97)');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
+    const bg = ctx.createLinearGradient(0, 0, W*0.6, H);
+    bg.addColorStop(0, 'rgba(28,6,58,0.93)'); bg.addColorStop(1, 'rgba(6,4,28,0.97)');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = 'rgba(167,139,250,0.055)';
     const gs = 22;
     for (let gx = gs; gx < W; gx += gs)
-      for (let gy = gs; gy < H; gy += gs) {
-        ctx.beginPath();
-        ctx.arc(gx, gy, 0.8, 0, Math.PI*2);
-        ctx.fill();
-      }
-
-    const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W * 0.7);
-    glow.addColorStop(0, 'rgba(244,114,182,0.09)');
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, W, H);
+      for (let gy = gs; gy < H; gy += gs) { ctx.beginPath(); ctx.arc(gx, gy, 0.8, 0, Math.PI*2); ctx.fill(); }
+    const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W*0.7);
+    glow.addColorStop(0, 'rgba(244,114,182,0.09)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+  } else {
+    ctx.fillStyle = '#f9f0ff'; ctx.fillRect(0, 0, W, H);
   }
-
   for (const peg of pegs) {
     const lit = litPegs.has(`${peg.row}-${peg.col}`);
-    ctx.beginPath();
-    ctx.arc(peg.x, peg.y, PEG_R, 0, Math.PI*2);
-    if (lit) {
-      ctx.fillStyle = c.pegLit;
-      ctx.shadowColor = c.pegGlow;
-      ctx.shadowBlur = 14;
-    } else {
-      ctx.fillStyle = c.pegColor;
-      ctx.shadowBlur = 0;
-    }
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(peg.x, peg.y, PEG_R, 0, Math.PI*2);
+    ctx.fillStyle  = lit ? c.pegLit  : c.pegColor;
+    ctx.shadowColor = lit ? c.pegGlow : 'transparent';
+    ctx.shadowBlur  = lit ? 14 : 0;
+    ctx.fill(); ctx.shadowBlur = 0;
   }
-
   for (const ball of balls) {
     for (let i = 0; i < ball.trail.length; i++) {
       const t = ball.trail[i];
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, BALL_R * (1 - i/ball.trail.length*0.5), 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${c.trail},${(1 - i/ball.trail.length)*0.22})`;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(t.x, t.y, BALL_R*(1-i/ball.trail.length*0.5), 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${c.trail},${(1-i/ball.trail.length)*0.22})`; ctx.fill();
     }
     const grad = ctx.createRadialGradient(ball.x-3, ball.y-3, 1, ball.x, ball.y, BALL_R);
-    grad.addColorStop(0, c.ballHi);
-    grad.addColorStop(0.5, c.ballMid);
-    grad.addColorStop(1, c.ballLo);
-    ctx.beginPath();
-    ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
-    ctx.fillStyle = grad;
-    ctx.shadowColor = c.ballGlow;
-    ctx.shadowBlur = 16;
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    grad.addColorStop(0, c.ballHi); grad.addColorStop(0.5, c.ballMid); grad.addColorStop(1, c.ballLo);
+    ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = grad; ctx.shadowColor = c.ballGlow; ctx.shadowBlur = 16;
+    ctx.fill(); ctx.shadowBlur = 0;
   }
 }
 
 function loop() {
   balls = balls.filter(b => !(b.done && b.trail.length === 0));
-  for (const b of balls) {
-    stepBall(b);
-    if (b.done) b.trail.pop();
-  }
+  for (const b of balls) { stepBall(b); if (b.done) b.trail.pop(); }
   drawBoard();
   requestAnimationFrame(loop);
 }
@@ -1053,9 +969,7 @@ function renderSlotsBar() {
   bar.innerHTML = '';
   slots.forEach(s => {
     const div = document.createElement('div');
-    div.className = 'slot';
-    div.textContent = s.label;
-    div.style.background = s.color;
+    div.className = 'slot'; div.textContent = s.label; div.style.background = s.color;
     bar.appendChild(div);
   });
 }
@@ -1064,14 +978,13 @@ renderSlotsBar();
 function showResult(idx) {
   const el = document.getElementById('result-display');
   el.textContent = slots[idx]?.label || '';
-  el.style.color = slots[idx]?.color || 'var(--accent)';
+  el.style.color  = slots[idx]?.color  || 'var(--accent)';
 }
 
 function flashSlot(idx) {
   const slotEls = document.getElementById('slots-bar').children;
   if (slotEls[idx]) {
-    slotEls[idx].classList.remove('winner');
-    void slotEls[idx].offsetWidth;
+    slotEls[idx].classList.remove('winner'); void slotEls[idx].offsetWidth;
     slotEls[idx].classList.add('winner');
   }
 }
@@ -1080,9 +993,7 @@ function flashSlot(idx) {
 document.getElementById('drop-btn').addEventListener('click', spawnBall);
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
-  if (e.code === 'Space' || e.key === 'd' || e.key === 'D') {
-    e.preventDefault(); spawnBall();
-  }
+  if (e.code === 'Space' || e.key === 'd' || e.key === 'D') { e.preventDefault(); spawnBall(); }
 });
 
 // ── Mute toggle ────────────────────────────────────────────────────────
@@ -1096,27 +1007,20 @@ muteBtn.addEventListener('click', () => {
 // ── Theme toggle ───────────────────────────────────────────────────────
 document.getElementById('theme-track').addEventListener('click', () => {
   const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   updateShareURL();
 });
 
 // ── Title edit ─────────────────────────────────────────────────────────
 const titleText  = document.getElementById('title-text');
 const titleInput = document.getElementById('title-input');
-
 titleText.addEventListener('click', () => {
-  titleText.style.display = 'none';
-  titleInput.style.display = 'block';
-  titleInput.value = titleText.textContent;
-  titleInput.focus(); titleInput.select();
+  titleText.style.display = 'none'; titleInput.style.display = 'block';
+  titleInput.value = titleText.textContent; titleInput.focus(); titleInput.select();
 });
-
 function commitTitle() {
   const val = titleInput.value.trim() || 'THENICOLET LOSER PLINKO';
-  titleText.textContent = val;
-  titleText.style.display = 'block';
-  titleInput.style.display = 'none';
+  titleText.textContent = val; titleText.style.display = 'block'; titleInput.style.display = 'none';
   updateShareURL();
 }
 titleInput.addEventListener('blur', commitTitle);
@@ -1124,28 +1028,23 @@ titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') commitTitle
 
 // ── Share URL ──────────────────────────────────────────────────────────
 function buildShareURL() {
-  const base = location.href.split('?')[0];
-  const t = encodeURIComponent(titleText.textContent);
-  const th = document.documentElement.getAttribute('data-theme');
+  const base    = location.href.split('?')[0];
+  const t       = encodeURIComponent(titleText.textContent);
+  const th      = document.documentElement.getAttribute('data-theme');
   const slotStr = slots.map(s => `${encodeURIComponent(s.label)}:${s.color.replace('#','')}`).join(',');
   return `${base}?title=${t}&theme=${th}&slots=${slotStr}`;
 }
-
-function updateShareURL() {
-  document.getElementById('share-url').value = buildShareURL();
-}
+function updateShareURL() { document.getElementById('share-url').value = buildShareURL(); }
 updateShareURL();
 
 document.getElementById('copy-btn').addEventListener('click', () => {
   navigator.clipboard.writeText(buildShareURL()).then(() => {
     const btn = document.getElementById('copy-btn');
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
   });
 });
 
-// ── Share drawer toggle ────────────────────────────────────────────────
 document.getElementById('share-toggle').addEventListener('click', () => {
   const bar = document.getElementById('url-bar');
   const tog = document.getElementById('share-toggle');
@@ -1164,23 +1063,12 @@ function renderModalInputs() {
   const container = document.getElementById('slot-inputs');
   container.innerHTML = '';
   slots.forEach((s, i) => {
-    const row = document.createElement('div');
-    row.className = 'slot-row';
-    const swatch = document.createElement('div');
-    swatch.className = 'slot-swatch';
-    swatch.style.background = s.color;
-    const input = document.createElement('input');
-    input.className = 'slot-input';
-    input.type = 'text';
-    input.value = s.label;
-    input.dataset.idx = i;
-    input.placeholder = 'Label\u2026';
-    const rem = document.createElement('button');
-    rem.className = 'remove-slot';
-    rem.textContent = '\u00D7';
-    rem.addEventListener('click', () => {
-      if (slots.length > 2) { slots.splice(i, 1); renderModalInputs(); }
-    });
+    const row    = document.createElement('div'); row.className = 'slot-row';
+    const swatch = document.createElement('div'); swatch.className = 'slot-swatch'; swatch.style.background = s.color;
+    const input  = document.createElement('input'); input.className = 'slot-input'; input.type = 'text';
+    input.value = s.label; input.dataset.idx = i; input.placeholder = 'Label\u2026';
+    const rem = document.createElement('button'); rem.className = 'remove-slot'; rem.textContent = '\u00D7';
+    rem.addEventListener('click', () => { if (slots.length > 2) { slots.splice(i, 1); renderModalInputs(); } });
     row.appendChild(swatch); row.appendChild(input); row.appendChild(rem);
     container.appendChild(row);
   });
@@ -1188,12 +1076,10 @@ function renderModalInputs() {
 
 cogBtn.addEventListener('click', () => { renderModalInputs(); modal.classList.add('open'); });
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
-
 addSlotBtn.addEventListener('click', () => {
   slots.push({ label: '10 SUBS', color: SLOT_PALETTE[slots.length % SLOT_PALETTE.length] });
   renderModalInputs();
 });
-
 saveBtn.addEventListener('click', () => {
   document.querySelectorAll('.slot-input').forEach(inp => {
     const idx = parseInt(inp.dataset.idx);
