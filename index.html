@@ -746,8 +746,8 @@ function spawnBall() {
   balls.push({
     x: W / 2 + (Math.random() - 0.5) * 8,
     y: 10,
-    vx: (Math.random() - 0.5) * 0.8,   // was 1.5
-    vy: 1.0,                             // was 2
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: 0.5,
     trail: [],
     done: false
   });
@@ -762,8 +762,8 @@ function stepBall(ball) {
   ball.trail.unshift({ x: ball.x, y: ball.y });
   if (ball.trail.length > 14) ball.trail.pop(); // slightly longer trail looks nicer slow
 
-  ball.vy += 0.09;       // gravity: was 0.22
-  ball.vx *= 0.992;      // horizontal damping: was 0.995
+  ball.vy += 0.045;      // gravity: was 0.09
+  ball.vx *= 0.989;      // horizontal damping: was 0.992
   ball.x += ball.vx;
   ball.y += ball.vy;
 
@@ -779,8 +779,8 @@ function stepBall(ball) {
       ball.x += nx * ov; ball.y += ny * ov;
       const dot = ball.vx*nx + ball.vy*ny;
       ball.vx -= 2*dot*nx; ball.vy -= 2*dot*ny;
-      ball.vx += (Math.random() - 0.5) * 0.7;  // was 1.2 — less chaotic scatter
-      ball.vy *= 0.65;                           // was 0.75 — softer bounce
+      ball.vx += (Math.random() - 0.5) * 0.4;  // was 0.7
+      ball.vy *= 0.55;                           // was 0.65
       const key = `${peg.row}-${peg.col}`;
       litPegs.add(key);
       setTimeout(() => litPegs.delete(key), 180);
